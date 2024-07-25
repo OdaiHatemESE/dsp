@@ -1,4 +1,4 @@
-import ApplicantInformation from "@/components/applicant-information";
+import ApplicantInformation from "@/components/applicant-information/applicant-information";
 import Attachments from "@/components/attachments";
 
 interface Params {
@@ -15,7 +15,7 @@ interface Params {
       switch (step) {
         case 'applicant-information':
           return <ApplicantInformation />
-        case '2':
+        case 'service-form':
           return 'form';
         case '3':
           return <Attachments />;

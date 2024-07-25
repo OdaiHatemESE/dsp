@@ -1,4 +1,9 @@
-export default function Breadcrumbs() {
+
+interface BreadcrumbsProps {
+    serviceId: string;
+}
+
+const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ serviceId }) => {
     return (
         <div className="mt-5 mb-5">
             <nav aria-label="Breadcrumb" className="aegov-breadcrumb with-seperator">
@@ -11,4 +16,6 @@ export default function Breadcrumbs() {
 
         </div>
     );
-}
+};
+
+export default Breadcrumbs;
