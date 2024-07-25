@@ -15,7 +15,7 @@ const whoApply:React.FC = () =>{
                             type="radio"
                         />
                         <div>
-                            <label  >Me</label>
+                            <label>Me</label>
                             <p id="me-description" className="text-sm text-gray-500 mt-1">
                                 (We will use your personal info to apply for service)
                             </p>

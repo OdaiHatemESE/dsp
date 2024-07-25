@@ -1,12 +1,11 @@
 // file path: /app/applicant-information/ApplicantDetails.tsx
 
-import { UserProfile } from "@/config/user.modal";
 
-interface ApplicantDetailsProps {
-    user: UserProfile | null;
-}
-
-const ApplicantDetails: React.FC<ApplicantDetailsProps> = ({ user }) => {
+'use client'; 
+import { useAppSelector } from "@/store/hooks";
+const ApplicantDetails: React.FC = () => {
+    
+  const user = useAppSelector((state) => state.user.user);
     return (
         <div className="ApplicantDetails">
             <h5>Applicant Information</h5>
