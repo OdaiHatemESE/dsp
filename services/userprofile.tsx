@@ -11,3 +11,5 @@ export const getUser = async (): Promise<UserProfile> => {
     throw new Error('Failed to fetch data');
   }
 };
+
+ 

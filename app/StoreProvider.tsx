@@ -1,11 +1,11 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import { Provider } from 'react-redux'
-import { makeStore, AppStore } from '../store/store'
+import { makeStore, AppStore } from '../store/lib/store'
 import { UserProfile } from '@/config/user.modal'
 import { getUser } from '@/services/userprofile'
 
-import { setUser } from '@/store/userSlice'
+import { setUser } from '@/store/slices/userSlice'
 export default function StoreProvider({
     children
 }: {

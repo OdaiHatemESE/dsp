@@ -5,9 +5,8 @@ import Header from "@/components/header";
 
 import StoreProvider from "./StoreProvider";
 import { UserProfile } from "@/config/user.modal";
-import { useAppDispatch } from "@/store/hooks";
 import { getUser } from "@/services/userprofile";
-import { setUser } from "@/store/userSlice";
+import { setUser } from "@/store/slices/userSlice";
 
 const inter = Inter({ subsets: ["latin"] });
 

@@ -95,3 +95,20 @@ export interface UserProfile {
     providerName: number;
   }
   
+
+  // Define the Response interface
+  export interface Response {
+  maskedMobile: string;
+  profile: any; // Assuming profile can be of any type as it's not detailed.
+  isSuccess: boolean;
+  message: string | null;
+  messageAr: string | null;
+}
+
+// Define the main interface
+export interface ApiResponse {
+  errorMessage: string | null;
+  errorMessageAr: string | null;
+  isSuccess: boolean;
+  response: Response;
+}

@@ -1,24 +1,25 @@
+'use client'
+
+import { useState } from "react";
 import ApplicantDetails from "./applicant-details";
 import WhoApply from "./who-apply";
-const ApplicantInformation: React.FC = async () => {
+import GetUserInfoByEID from "./get-user-info-eid";
+const ApplicantInformation: React.FC = () => {
+  const [whoApply, setWhoApply] = useState(1);
+
+  const handleValueChange = (value: any) => {
+    setWhoApply(value);
+  };
+
   return (
     <div className="ApplicantInformation">
-      <WhoApply />
-      <ApplicantDetails />
-      <hr className="mb-5 mt-5" />
-      <h5>User Type</h5>
-      <p className="text-sm text-gray-500 mt-1">Please Select user Type</p>
-      <div className="w-full">
-        <div className="aegov-form-control">
-          <div className="form-control-input">
-            <select id="opt1" name="opt1">
-              <option>option 1</option>
-              <option>option 2</option>
-              <option>option 3</option>
-            </select>
-          </div>
-        </div>
-      </div>
+
+      <WhoApply requestForId={handleValueChange} />
+      <ApplicantDetails requestForId={Number(whoApply)}  />
+      <GetUserInfoByEID />
+
+
+      {/* userType */}
 
       <div className="w-full actions mt-10 flex flex-row justify-end flex-wrap">
         <button className="aegov-btn btn-lg" type="button">

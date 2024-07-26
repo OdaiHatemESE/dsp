@@ -1,7 +1,20 @@
-const whoApply:React.FC = () =>{
-    return(
+'use client'
+
+import React, { useState } from 'react';
+
+interface requestForId {
+    requestForId: (id: number) => void;
+}
+
+const whoApply: React.FC<requestForId> = ({ requestForId }) => {
+    const [id, setId] = useState<number>(0);
+    const handleChange = (event: any) => {
+        requestForId(Number(event.target.value));
+        setId(Number(event.target.value))
+    }
+    return (
         <div>
-               <h5>To Whom Are You Applying For ?</h5>
+            <h5>To Whom Are You Applying For ?</h5>
             <p className="text-sm text-gray-500 mt-1">
                 Please Choose for who you apply this service
             </p>
@@ -13,6 +26,10 @@ const whoApply:React.FC = () =>{
                             aria-describedby="me-description"
                             name="plan"
                             type="radio"
+                            value={1}
+                            checked={id === 1}
+                            onChange={handleChange}
+
                         />
                         <div>
                             <label>Me</label>
@@ -29,6 +46,9 @@ const whoApply:React.FC = () =>{
                             aria-describedby="another-description"
                             name="plan"
                             type="radio"
+                            value={2}
+                            checked={id === 2}
+                            onChange={handleChange}
                         />
                         <div>
                             <label  >Another Person</label>
