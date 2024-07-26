@@ -7,7 +7,7 @@ interface requestForId {
 }
 
 const whoApply: React.FC<requestForId> = ({ requestForId }) => {
-    const [id, setId] = useState<number>(0);
+    const [id, setId] = useState<number>(1);
     const handleChange = (event: any) => {
         requestForId(Number(event.target.value));
         setId(Number(event.target.value))
@@ -24,7 +24,7 @@ const whoApply: React.FC<requestForId> = ({ requestForId }) => {
                         <input
                             id="Me"
                             aria-describedby="me-description"
-                            name="plan"
+                            name="who"
                             type="radio"
                             value={1}
                             checked={id === 1}
@@ -44,7 +44,7 @@ const whoApply: React.FC<requestForId> = ({ requestForId }) => {
                         <input
                             id="another"
                             aria-describedby="another-description"
-                            name="plan"
+                            name="who"
                             type="radio"
                             value={2}
                             checked={id === 2}

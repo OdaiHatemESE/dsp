@@ -3,16 +3,18 @@
 
 'use client';
 import { useAppSelector } from "@/store/lib/hooks";
-import { useState } from "react";
+
 
 interface param {
     requestForId: number
 }
 
 const ApplicantDetails: React.FC<param> = ({ requestForId }) => {
-    const applicant = useAppSelector((state) => state.applicant.applicant);
+    
+    const otherApplicant = useAppSelector((state) => state.applicant.applicant);
     const mainUser = useAppSelector((state) => state.user.user);
-    const user = requestForId == 1 ? mainUser : applicant;
+    
+    const user = requestForId == 1 ? mainUser : otherApplicant;
 
     return (
         <section>

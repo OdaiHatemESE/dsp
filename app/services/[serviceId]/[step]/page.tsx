@@ -1,36 +1,47 @@
 import ApplicantInformation from "@/components/applicant-information/applicant-information";
 import Attachments from "@/components/attachments";
+import StudyDetails from "../../forms/issuance-and-attestation/study-details";
 
 interface Params {
-    params: {
-      step: string;
-    };
-  }
-  
-  const DynamicPage: React.FC<Params> = ({ params }) => {
-    const { step } = params;
-  
-    // Function to determine which component to render
-    const renderComponent = () => {
-      switch (step) {
-        case 'applicant-information':
-          return <ApplicantInformation />
-        case 'service-form':
-          return 'form';
-        case '3':
-          return <Attachments />;
-          case '4':
-          return 'summary';
-        default:
-          return <div>Default Component</div>;
-      }
-    };
-  
-    return (
-      <div>
-        {renderComponent()}
-      </div>
-    );
+  params: {
+    step: string;
+    serviceId: string;
   };
-  
-  export default DynamicPage;
+}
+
+const DynamicPage: React.FC<Params> = ({ params }) => {
+
+  const step = params.step;
+  const serviceId = params.serviceId;
+  console.log(params);
+  // Function to determine which component to render
+  const renderComponent = () => {
+    switch (step) {
+      case 'applicant-information':
+        return <ApplicantInformation />
+      case 'service-form':
+        return serviceForm(serviceId);
+      case '3':
+        return <Attachments />;
+      case '4':
+        return 'summary';
+      default:
+        return <div>Default Component</div>;
+    }
+  };
+
+  const serviceForm = (id: string) => {
+    switch (id) {
+      case 'issuance-and-attestation':
+        return <StudyDetails />
+    }
+  }
+
+  return (
+    <div>
+      {renderComponent()}
+    </div>
+  );
+};
+
+export default DynamicPage;

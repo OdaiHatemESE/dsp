@@ -52,7 +52,7 @@ const GetUserInfoByEID: React.FC = () => {
                 </div>
                 <button onClick={verifyEid} className="aegov-btn" type="button">Verfiy</button>
             </div>
-            <div id="mobileNumberForm" className="min-h-screen flex items-center justify-center bg-gray-100">
+            <div id="mobileNumberForm" className="flex items-center justify-center bg-gray-100">
                 <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
                     <h2 className="text-2xl font-semibold text-gray-800 mb-4">Verify Your Mobile Number</h2>
                     <p className="mb-4 text-gray-600">Your mobile number: {mobileNumber}</p>
@@ -80,6 +80,7 @@ const GetUserInfoByEID: React.FC = () => {
                     </form>
                 </div>
             </div>
+            
             <div id="otpForm">
 
             </div>
