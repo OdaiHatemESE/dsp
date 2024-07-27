@@ -13,12 +13,11 @@ const DynamicPage: React.FC<Params> = ({ params }) => {
 
   const step = params.step;
   const serviceId = params.serviceId;
-  console.log(params);
   // Function to determine which component to render
   const renderComponent = () => {
     switch (step) {
       case 'applicant-information':
-        return <ApplicantInformation />
+        return <ApplicantInformation serviceId={serviceId} />
       case 'service-form':
         return serviceForm(serviceId);
       case '3':

@@ -23,7 +23,6 @@ export interface Service {
     id: string;
     requestForId:number,
     serviceId:string,
-    applicationDefinitionId: number;
     serviceName: string;
     serviceNameArabic: string;
     currentStepIndex: number;

@@ -6,7 +6,7 @@ export const getMobileNumber = async (eid: string): Promise<ApiResponse> => {
     try {
         const response = await fetchWithAuth('certificates/v1/GetIcaMaskedMobile/' + eid + '/false');
         const res: ApiResponse = await response.json();
-        console.log(res);
+     //   console.log(res);
 
         return res;
     } catch (error) {
@@ -20,7 +20,7 @@ export const verfiyMobile = async (eid: string, mobilenumber: string): Promise<U
     try {
         const response = await fetchWithAuth('certificates/v1/ValidateIcaMobile/' + eid + '/' + mobilenumber);
         const res: UserProfile = await response.json();
-        console.log(res);
+       // console.log(res);
         return res;
     } catch (error) {
 

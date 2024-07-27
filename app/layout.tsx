@@ -4,9 +4,6 @@ import "./globals.css";
 import Header from "@/components/header";
 
 import StoreProvider from "./StoreProvider";
-import { UserProfile } from "@/config/user.modal";
-import { getUser } from "@/services/userprofile";
-import { setUser } from "@/store/slices/userSlice";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,7 +11,7 @@ export const metadata: Metadata = {
   title: "Digital Services Portal",
   description: "Digital Services Portal",
 };
- 
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -22,25 +19,17 @@ export default async function RootLayout({
 }>) {
 
 
-  let user:UserProfile | null =null;
-  try {
-    user = await getUser();
-  //  dispatch(setUser(user));
-    
-  } catch (err) {
-    console.error("Failed to fetch user", err);
-  }
 
   return (
     <html lang="en">
-      
+
       <body className={inter.className}>
         <StoreProvider>
-        <Header></Header>
+          <Header></Header>
 
-        {children}
+          {children}
         </StoreProvider>
-        </body>
+      </body>
     </html>
   );
 }

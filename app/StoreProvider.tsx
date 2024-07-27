@@ -18,14 +18,15 @@ export default function StoreProvider({
         storeRef.current = makeStore()
     }
 
-    const [user, setUserStat] = useState<UserProfile | null>(null);
+   
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        console.log('dddddddddddddddddddddddddd');
         const fetchUser = async () => {
             try {
                 const userData = await getUser();
-                setUserStat(userData);
+                console.log('a777777aaaaaa')
                 storeRef.current?.dispatch(setUser(userData))
             } catch (error) {
                 setError('Failed to fetch user');

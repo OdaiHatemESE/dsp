@@ -22,16 +22,16 @@ const GetUserInfoByEID: React.FC = () => {
 
     const verifyEid = async () => {
         let data: ApiResponse = await getMobileNumber(emirateId);
-        console.log(data.response.maskedMobile);
+     //   console.log(data.response.maskedMobile);
         setMobileNumber(data.response.maskedMobile)
     }
 
     const handleMobileSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        console.log('Last 4 digits entered:', digits);
+    //    console.log('Last 4 digits entered:', digits);
         let data: UserProfile = await verfiyMobile(emirateId, digits)
         dispatch(setApplicant(data))
-        console.log(data);
+       // console.log(data);
     };
 
     return (

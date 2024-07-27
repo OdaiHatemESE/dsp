@@ -15,14 +15,15 @@ const serviceSlice = createSlice({
   initialState,
   reducers: {
     setService(state, action: PayloadAction<ServiceForm>) {
+ 
+      console.log('Service',state);
       state.service = action.payload;
     },
-    clearService(state){
-        state.service = null;
-    }
+     
   },
 });
 
 export const { setService } = serviceSlice.actions;
+ 
 
 export default serviceSlice.reducer;

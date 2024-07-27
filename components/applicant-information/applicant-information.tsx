@@ -1,21 +1,78 @@
 'use client'
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ApplicantDetails from "./applicant-details";
 import WhoApply from "./who-apply";
 import GetUserInfoByEID from "./get-user-info-eid";
-const ApplicantInformation: React.FC = () => {
+import { ServiceConfig } from "@/config/services-config";
+import { ServiceForm } from "@/config/service.model";
+import { useAppDispatch, useAppSelector } from "@/store/lib/hooks";
+import { setService } from "@/store/slices/serviceSlice";
+import { UserProfile } from "@/config/user.modal";
+import { stat } from "fs";
+
+interface params {
+  serviceId: string
+}
+
+const ApplicantInformation: React.FC<params> = ({ serviceId }) => {
   const [whoApply, setWhoApply] = useState(1);
+  const state=useAppSelector((state)=>state);
+  const user=useAppSelector((state)=>state.user.user);
+  const serviceState = useAppSelector((state) => state.service.service);
+
+ 
+ 
+  const dispatch = useAppDispatch();
 
   const handleValueChange = (value: any) => {
     setWhoApply(value);
   };
 
+ 
+
+
+  useEffect(() => {
+    console.log('tazzzzzzzzzzzzzz')
+    const appId = new URLSearchParams(window.location.search).get('application-id');
+
+    if (appId != null) {
+      // This is edit mode, handle edit mode logic here if needed
+    } else {
+      // This is new mode
+      
+
+      if (serviceState != null) {
+        // Reset store if it is not empty
+        dispatch(setService({} as ServiceForm));
+
+      } else {
+        // Store is empty
+
+        const service = ServiceConfig.find(service => service.serviceId === serviceId);
+    
+        const serviceForm: ServiceForm = {
+          id: service?.id ?? '',
+          requestForId: Number(whoApply),
+          serviceId: service?.serviceId ?? '',
+          serviceName: service?.serviceName ?? '',
+          serviceNameArabic: service?.serviceNameArabic ?? '',
+          currentStepIndex: 1,
+          applicantInformation: user ?? {} as UserProfile,
+          form: [],
+          attachment: []
+        };
+        dispatch(setService(serviceForm));
+
+
+      }
+    }
+  }, []);
   return (
     <div className="ApplicantInformation">
 
       <WhoApply requestForId={handleValueChange} />
-      <ApplicantDetails requestForId={Number(whoApply)}  />
+      <ApplicantDetails requestForId={Number(whoApply)} />
       <GetUserInfoByEID />
 
 
