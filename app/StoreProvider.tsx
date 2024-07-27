@@ -25,9 +25,9 @@ export default function StoreProvider({
         console.log('dddddddddddddddddddddddddd');
         const fetchUser = async () => {
             try {
-                const userData = await getUser();
-                console.log('a777777aaaaaa')
-                storeRef.current?.dispatch(setUser(userData))
+                  const userData = await getUser();
+                  console.log('a777777aaaaaa')
+                 storeRef.current?.dispatch(setUser(userData))
             } catch (error) {
                 setError('Failed to fetch user');
             }
