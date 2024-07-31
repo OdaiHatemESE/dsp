@@ -16,7 +16,7 @@ const authSlice = createSlice({
   reducers: {
     setToken(state, action: PayloadAction<string>) {
       state.token = action.payload;
-      localStorage.setItem('authToken', action.payload);
+    
       setCookie(null, 'authToken', action.payload, {
         maxAge: 30 * 24 * 60 * 60,
         path: '/',
@@ -25,7 +25,6 @@ const authSlice = createSlice({
     },
     clearToken(state) {
       state.token = null;
-      localStorage.removeItem('authToken');
     },
   },
 });

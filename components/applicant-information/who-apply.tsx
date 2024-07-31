@@ -1,5 +1,6 @@
 'use client'
 
+import { useAppSelector } from '@/store/lib/hooks';
 import React, { useState } from 'react';
 
 interface requestForId {
@@ -7,7 +8,8 @@ interface requestForId {
 }
 
 const whoApply: React.FC<requestForId> = ({ requestForId }) => {
-    const [id, setId] = useState<number>(1);
+    const serviceState = useAppSelector((state) => state.service.service);
+    const [id, setId] = useState<number>(serviceState?.requestForId ?? 1);
     const handleChange = (event: any) => {
         requestForId(Number(event.target.value));
         setId(Number(event.target.value))

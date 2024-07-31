@@ -11,6 +11,7 @@ import { jwtDecode } from 'jwt-decode';
 export async function middleware(req: NextRequest) {
   // Retrieving the authToken from cookies
   const token = req.cookies.get('authToken')?.value;
+ 
   const LoginURL = process.env.LoginURL ?? '';
 
   // Check if token exists
@@ -24,6 +25,8 @@ export async function middleware(req: NextRequest) {
       // Check if the token is expired
       if (decodedToken.exp < currentTime) {
         // If the token is expired, redirect to the login URL with the current URL as a query parameter
+       
+ 
         const url = new URL(LoginURL);
         url.searchParams.set('RedirectUri', req.nextUrl.href);
         return NextResponse.redirect(url);

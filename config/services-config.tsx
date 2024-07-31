@@ -1,4 +1,4 @@
-import { Service } from "./service.model";
+import { Service, StudyDetailsForm } from "./service.model";
 
 const Issuance_and_attestation__applicationDefinitionId = 1;
 
@@ -29,5 +29,6 @@ export const ServiceConfig: Service[] = [
                 title:'summary'
              }
         ],
+        form: {} as StudyDetailsForm
     },
 ];

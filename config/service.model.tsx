@@ -9,6 +9,7 @@ export interface Service {
     serviceNameArabic: string;
     currentStepIndex: number;
     steps:ServiceStep[];
+    form:{}
     
     
   }
@@ -20,15 +21,15 @@ export interface Service {
   
 
   export interface ServiceForm{
-    id: string;
-    requestForId:number,
-    serviceId:string,
-    serviceName: string;
-    serviceNameArabic: string;
-    currentStepIndex: number;
-    applicantInformation:UserProfile,
-    form:[],
-    attachment:[] 
+    id?: string; 
+    requestForId?:number,
+    serviceId?: string;
+    serviceName?: string;
+    serviceNameArabic?: string;
+    currentStepIndex?: number;
+    applicantInformation?: UserProfile;
+    form?: any;
+    attachment?: [];
   }
 
 
@@ -81,3 +82,17 @@ export interface Address {
   houseNumber:string;
   emirate:string;
 }
+
+
+export interface StudyDetailsForm{
+  plan: string,
+  Emirate: string,
+  academicYear: string,
+  schoolGrade:string
+  schoolName: string,
+  studentNumber: string,
+  comments: string,
+  MOFAIC: string
+}
+
+ 

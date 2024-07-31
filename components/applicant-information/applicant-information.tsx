@@ -8,66 +8,37 @@ import { ServiceConfig } from "@/config/services-config";
 import { ServiceForm } from "@/config/service.model";
 import { useAppDispatch, useAppSelector } from "@/store/lib/hooks";
 import { setService } from "@/store/slices/serviceSlice";
-import { UserProfile } from "@/config/user.modal";
+import { User, UserProfile } from "@/config/user.modal";
 import { stat } from "fs";
+import { useRouter } from "next/navigation";
+import setServiceState from "@/services/setServiceState";
 
 interface params {
   serviceId: string
 }
 
 const ApplicantInformation: React.FC<params> = ({ serviceId }) => {
-  const [whoApply, setWhoApply] = useState(1);
-  const state=useAppSelector((state)=>state);
-  const user=useAppSelector((state)=>state.user.user);
-  const serviceState = useAppSelector((state) => state.service.service);
 
- 
- 
-  const dispatch = useAppDispatch();
+  const [whoApply, setWhoApply] = useState(1);
+  const router = useRouter();
+  const dispatch=useAppDispatch();
+  let serviceState = useAppSelector((state) => state.service.service);
+  
 
   const handleValueChange = (value: any) => {
     setWhoApply(value);
+    serviceState = { ...serviceState, requestForId: Number(value)  }
+    dispatch(setService(serviceState));
   };
 
- 
+
+  const goNext = () => {
+    router.push('/services/' + serviceId + '/service-form');
+  }
 
 
-  useEffect(() => {
-    console.log('tazzzzzzzzzzzzzz')
-    const appId = new URLSearchParams(window.location.search).get('application-id');
-
-    if (appId != null) {
-      // This is edit mode, handle edit mode logic here if needed
-    } else {
-      // This is new mode
-      
-
-      if (serviceState != null) {
-        // Reset store if it is not empty
-        dispatch(setService({} as ServiceForm));
-
-      } else {
-        // Store is empty
-
-        const service = ServiceConfig.find(service => service.serviceId === serviceId);
-    
-        const serviceForm: ServiceForm = {
-          id: service?.id ?? '',
-          requestForId: Number(whoApply),
-          serviceId: service?.serviceId ?? '',
-          serviceName: service?.serviceName ?? '',
-          serviceNameArabic: service?.serviceNameArabic ?? '',
-          currentStepIndex: 1,
-          applicantInformation: user ?? {} as UserProfile,
-          form: [],
-          attachment: []
-        };
-        dispatch(setService(serviceForm));
 
 
-      }
-    }
-  }, []);
   return (
     <div className="ApplicantInformation">
 
@@ -79,7 +50,7 @@ const ApplicantInformation: React.FC<params> = ({ serviceId }) => {
       {/* userType */}
 
       <div className="w-full actions mt-10 flex flex-row justify-end flex-wrap">
-        <button className="aegov-btn btn-lg" type="button">
+        <button className="aegov-btn btn-lg" type="button" onClick={goNext}>
           Next
           <svg
             className="rtl:-scale-x-100"

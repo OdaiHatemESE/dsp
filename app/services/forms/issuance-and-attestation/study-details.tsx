@@ -6,10 +6,14 @@ import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as Yup from 'yup';
 import classNames from 'classnames';
+import { useAppDispatch, useAppSelector } from '@/store/lib/hooks';
+import { setService } from '@/store/slices/serviceSlice';
+import { ServiceForm,StudyDetailsForm } from '@/config/service.model';
+import { useRouter } from "next/navigation";
 
 
 const validationSchema = Yup.object().shape({
-    plan: Yup.number().required('Request type is required'),
+    plan: Yup.string(),
     Emirate: Yup.string().required('Emirate is required'),
     academicYear: Yup.string().required('Academic year is required'),
     schoolGrade: Yup.string().required('School grade is required'),
@@ -20,17 +24,30 @@ const validationSchema = Yup.object().shape({
 });
 
 
-export default function StudyDetails() {
+interface params {
+    serviceId: string
+}
 
-    const [formData, setFormData] = useState({
-        plan: 1,
-        Emirate: '',
-        academicYear: '',
-        schoolGrade: '',
-        schoolName: '',
-        studentNumber: '8989898qweqwe',
-        comments: '',
-        MOFAIC: '',
+const StudyDetails: React.FC<params> = ({ serviceId }) => {
+
+    const router = useRouter();
+
+    const serviceState = useAppSelector((state) => state.service.service);
+    console.log(serviceState);
+    let updatedService = { ...serviceState, form: serviceState?.form ?? {} as StudyDetailsForm }
+    console.log(updatedService.form)
+    const dispath = useAppDispatch();
+
+ 
+    const [formData, setFormData] = useState<StudyDetailsForm>({
+        plan: updatedService.form.plan ?? "1",
+        Emirate: updatedService.form.Emirate,
+        academicYear: updatedService.form.academicYear,
+        schoolGrade: updatedService.form.schoolGrade,
+        schoolName: updatedService.form.schoolName,
+        studentNumber: updatedService.form.studentNumber,
+        comments: updatedService.form.comments,
+        MOFAIC: updatedService.form.MOFAIC ?? 'No',
     });
 
     const { register, handleSubmit, formState: { errors } } = useForm({
@@ -39,9 +56,16 @@ export default function StudyDetails() {
 
     })
 
+    const goPrevious = () => {
+        router.push('/services/' + serviceId + '/applicant-information');
+    }
+
 
     const onSubmit = (data: any) => {
-      //  console.log('Form submitted:', data);
+        // console.clear();
+        // //  console.log('Form submitted:', data);
+        const service = { ...serviceState, form: data } as ServiceForm;
+        dispath(setService(service))
         setFormData(data);
     };
 
@@ -56,10 +80,9 @@ export default function StudyDetails() {
                             id="softCopy"
                             aria-describedby="softCopy-description"
                             type="radio"
-                            value={formData.plan}
-                            checked={formData.plan == 1}
-                            {...register('plan')}
-                        />
+                            value={"1"}
+                            checked={formData.plan == "1"}
+                            {...register('plan')} />
                         <div>
                             <label htmlFor="softCopy">Soft Copy</label>
                             <p id="softCopy-description" className="text-sm text-gray-500 mt-1">
@@ -74,11 +97,9 @@ export default function StudyDetails() {
                             id="hardCopy"
                             aria-describedby="hardCopy-description"
                             type="radio"
-                            value={formData.plan}
-                            checked={formData.plan == 2}
-
-                            {...register('plan')}
-                        />
+                            value={"2"}
+                            checked={formData.plan == "2"}
+                            {...register('plan')} />
                         <div>
                             <label htmlFor="hardCopy">Hard Copy</label>
                             <p id="hardCopy-description" className="text-sm text-gray-500 mt-1">
@@ -249,7 +270,38 @@ export default function StudyDetails() {
                         />
                     </svg>
                 </button>
+                <button className="aegov-btn btn-lg" type="button" onClick={goPrevious}>
+                    Previous
+                    <svg
+                        className="rtl:-scale-x-100"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 256 256"
+                    >
+                        <rect width="256" height="256" fill="none" />
+                        <line
+                            x1="40"
+                            y1="128"
+                            x2="216"
+                            y2="128"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="16"
+                        />
+                        <polyline
+                            points="144 56 216 128 144 200"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="16"
+                        />
+                    </svg>
+                </button>
             </div>
         </form>
     )
 }
+
+export default StudyDetails;

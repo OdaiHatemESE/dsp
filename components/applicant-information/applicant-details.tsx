@@ -2,7 +2,7 @@
 
 
 'use client';
-import { useAppSelector } from "@/store/lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/lib/hooks";
 
 
 interface param {
@@ -15,6 +15,9 @@ const ApplicantDetails: React.FC<param> = ({ requestForId }) => {
     const mainUser = useAppSelector((state) => state.user.user);
     
     const user = requestForId == 1 ? mainUser : otherApplicant;
+ 
+    
+
 
     return (
         <section>

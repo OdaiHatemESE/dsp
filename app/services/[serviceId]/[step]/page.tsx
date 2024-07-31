@@ -32,7 +32,7 @@ const DynamicPage: React.FC<Params> = ({ params }) => {
   const serviceForm = (id: string) => {
     switch (id) {
       case 'issuance-and-attestation':
-        return <StudyDetails />
+        return <StudyDetails  serviceId={serviceId} />
     }
   }
 
