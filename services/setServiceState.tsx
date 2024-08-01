@@ -37,13 +37,12 @@ const setServiceState = ({ serviceId, whoApply }: Params) => {
         applicantInformation: mainUser ?? {} as UserProfile,
         form: updatedserviceState.form,
         attachment: serviceState?.attachment,
-        steps: serviceState?.steps ?? service?.steps
+        
       }
 
       const user = Number(whoApply) == 1 ? mainUser : otherApplicant;
       updatedserviceState = { ...updatedserviceState, applicantInformation: user ?? {} as UserProfile };
-
-      console.log('from set service state');
+     
       dispatch(setService(updatedserviceState));
 
     }

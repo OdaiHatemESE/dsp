@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from '@/store/lib/hooks';
 import { setService } from '@/store/slices/serviceSlice';
 import { ServiceForm,StudyDetailsForm } from '@/config/service.model';
 import { useRouter } from "next/navigation";
+import { useStepper } from '@/components/steper/stepperProvider';
 
 
 const validationSchema = Yup.object().shape({
@@ -30,7 +31,7 @@ interface params {
 }
 
 const StudyDetails: React.FC<params> = ({ serviceId }) => {
-
+    const { nextStep,prevStep } = useStepper();
     const router = useRouter();
 
     const serviceState = useAppSelector((state) => state.service.service);
@@ -57,9 +58,12 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
 
     })
 
-    const goPrevious = () => {
-        router.push('/services/' + serviceId + '/applicant-information');
-    }
+    
+
+  
+   const goPrevious = () =>{
+    prevStep();
+   }
 
 
     const onSubmit = (data: any) => {
@@ -68,7 +72,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
         const service = { ...serviceState, form: data } as ServiceForm;
         dispath(setService(service))
         setFormData(data);
-        router.push('/services/' + serviceId + '/attachments');
+   nextStep();
     };
 
     return (

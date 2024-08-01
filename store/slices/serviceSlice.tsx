@@ -9,16 +9,14 @@ interface ServiceState {
 const initialState: ServiceState = {
     service: null,
 };
-let i = 1;
 const serviceSlice = createSlice({
   name: 'service',
   initialState,
   reducers: {
     setService(state, action: PayloadAction<ServiceForm>) {
-      console.log('------------------')
-      ++i;
+      console.clear();
+      console.log('from set service state');
       console.log(action.payload);
-      console.log(i);
       state.service = action.payload;
     },
      

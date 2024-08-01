@@ -12,6 +12,7 @@ import { User, UserProfile } from "@/config/user.modal";
 import { stat } from "fs";
 import { useRouter } from "next/navigation";
 import setServiceState from "@/services/setServiceState";
+import { useStepper } from "../steper/stepperProvider";
 
 interface params {
   serviceId: string
@@ -19,6 +20,8 @@ interface params {
 
 const ApplicantInformation: React.FC<params> = ({ serviceId }) => {
 
+  const { nextStep } = useStepper();
+   
   const [whoApply, setWhoApply] = useState(1);
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -33,31 +36,7 @@ const ApplicantInformation: React.FC<params> = ({ serviceId }) => {
 
 
   const goNext = () => {
-    router.push('/services/' + serviceId + '/service-form');
-    let steps = serviceState?.steps;
-    if (steps) {
-      let updatedSteps = steps.map((step, index) => {
-        if (index === 0) {
-          return {
-            ...step,
-            status: 'step-completed'
-          };
-        }
-        else if(index===1){
-          return {
-            ...step,
-            status: 'step-current'
-          };
-        }
-        return step;
-      });
-
-      console.log('wwwww', updatedSteps)
-      serviceState = { ...serviceState, steps: updatedSteps }
-      dispatch(setService(serviceState));
-    }
-  
-
+    nextStep()
   }
 
 

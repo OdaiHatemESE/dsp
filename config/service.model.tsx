@@ -1,4 +1,5 @@
  
+import { ReactComponentElement } from "react";
 import { UserProfile } from "./user.modal";
 
 export interface Service {
@@ -30,6 +31,7 @@ export interface Service {
     index: number;
     title: string;
     status:string;
+    component:any
   }
   
 
@@ -40,7 +42,6 @@ export interface Service {
     serviceName?: string;
     serviceNameArabic?: string;
     currentStepIndex?: number;
-    steps?:ServiceStep[];
     applicantInformation?: UserProfile;
     form?: any;
     attachment?:AttachmentList[];

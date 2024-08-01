@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "@/store/lib/hooks";
 import { AttachmentList } from "@/config/service.model";
 import { arrayBuffer } from "stream/consumers";
 import { setService } from "@/store/slices/serviceSlice";
+import { useStepper } from "./steper/stepperProvider";
 
 interface Params {
     serviceId: string;
@@ -24,10 +25,22 @@ interface FormValues {
     [key: string]: File | undefined;
 }
 
+
+
 const Attachments: React.FC<Params> = ({ serviceId }) => {
+
+
+    const { nextStep, prevStep } = useStepper();
+    const goPrevious = () => {
+        prevStep();
+    }
+
+
     const service = ServiceConfig.find(service => service.serviceId === serviceId);
-    const attachments = service?.attachments ?? [];
+
+
     let serviceState = useAppSelector((state) => state.service.service);
+    const attachments = service?.attachments ?? serviceState?.attachment ?? [];
     const dispatch = useAppDispatch();
 
     const fileValidationSchema = (required: boolean) =>
@@ -50,13 +63,10 @@ const Attachments: React.FC<Params> = ({ serviceId }) => {
 
     const { register, handleSubmit, control, formState: { errors } } = useForm<FormValues>({
         resolver: yupResolver(validationSchema)
-      
+
     });
 
-    const router = useRouter();
-    const goPrevious = () => {
-        router.push('/services/' + serviceId + '/service-form');
-    }
+
 
     const convertTobinary = (key: string, data: any): Promise<ArrayBuffer | undefined> => {
         return new Promise((resolve, reject) => {
@@ -88,11 +98,11 @@ const Attachments: React.FC<Params> = ({ serviceId }) => {
                 };
             })
         );
-    
+
         serviceState = { ...serviceState, attachment: updatedAttachments };
         dispatch(setService(serviceState));
         console.log(serviceState);
-        router.push('/services/' + serviceId + '/summary');
+        nextStep();
     }
 
     return (
