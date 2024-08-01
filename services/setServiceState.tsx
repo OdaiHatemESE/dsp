@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/store/lib/hooks";
 import { setService } from "@/store/slices/serviceSlice";
 import { ServiceConfig } from "@/config/services-config";
-import { ServiceForm } from "@/config/service.model";
+import { AttachmentList, ServiceForm } from "@/config/service.model";
 import { UserProfile } from "@/config/user.modal";
 import { setUser } from "@/store/slices/userSlice";
 
@@ -30,15 +30,16 @@ const setServiceState = ({ serviceId, whoApply }: Params) => {
       updatedserviceState = {
         id: service?.id ?? '',
         requestForId: Number(whoApply),
-        serviceId: service?.serviceId ?? '',
-        serviceName: service?.serviceName ?? '',
-        serviceNameArabic: service?.serviceNameArabic ?? '',
+        serviceId: service?.serviceId,
+        serviceName: service?.serviceName,
+        serviceNameArabic: service?.serviceNameArabic,
         currentStepIndex: 1,
         applicantInformation: mainUser ?? {} as UserProfile,
-        form: updatedserviceState.form ?? {},
-        attachment: []
+        form: updatedserviceState.form,
+        attachment: serviceState?.attachment,
+        steps: serviceState?.steps ?? service?.steps
       }
-      console.log("requestForId",updatedserviceState.requestForId);
+
       const user = Number(whoApply) == 1 ? mainUser : otherApplicant;
       updatedserviceState = { ...updatedserviceState, applicantInformation: user ?? {} as UserProfile };
 

@@ -1,17 +1,12 @@
 // middleware.ts
-// Importing NextResponse from next/server to handle server-side responses
 import { NextResponse } from 'next/server';
-// Importing NextRequest from next/server to handle server-side requests
 import type { NextRequest } from 'next/server';
-// Importing jwtDecode to decode JSON Web Tokens
-import { jwtDecode } from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 
-
-// Middleware function to handle incoming requests
 export async function middleware(req: NextRequest) {
   // Retrieving the authToken from cookies
-  const token = req.cookies.get('authToken')?.value;
- 
+  let token = req.cookies.get('authToken')?.value ?? '';
+
   const LoginURL = process.env.LoginURL ?? '';
 
   // Check if token exists
@@ -24,23 +19,28 @@ export async function middleware(req: NextRequest) {
 
       // Check if the token is expired
       if (decodedToken.exp < currentTime) {
-        // If the token is expired, redirect to the login URL with the current URL as a query parameter
-       
- 
+        // Log the expired token
+        console.log('Expired token:', token);
+
+        // Create a response to delete the authToken cookie
+        const response = NextResponse.redirect(LoginURL);
+        
+        // Remove the 'authToken' cookie
+        response.cookies.set('authToken', '', { maxAge: -1 });
+
+        // Append the redirect URI as a query parameter to the login URL
         const url = new URL(LoginURL);
         url.searchParams.set('RedirectUri', req.nextUrl.href);
-        return NextResponse.redirect(url);
 
+        // Return the response to redirect the user
+        return response;
       }
-
-      
-      
-
     } catch (error) {
       // Log an error if decoding the token fails
       console.error('Failed to decode token:', error);
+
       // Redirect to the login URL with the current URL as a query parameter in case of an error
-      const url = new URL('https://uap-stg.ese.gov.ae/User/Login/ESE.EES');
+      const url = new URL(LoginURL);
       url.searchParams.set('RedirectUri', req.nextUrl.href);
       return NextResponse.redirect(url);
     }

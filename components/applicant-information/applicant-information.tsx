@@ -5,7 +5,7 @@ import ApplicantDetails from "./applicant-details";
 import WhoApply from "./who-apply";
 import GetUserInfoByEID from "./get-user-info-eid";
 import { ServiceConfig } from "@/config/services-config";
-import { ServiceForm } from "@/config/service.model";
+import { ServiceForm, ServiceStep } from "@/config/service.model";
 import { useAppDispatch, useAppSelector } from "@/store/lib/hooks";
 import { setService } from "@/store/slices/serviceSlice";
 import { User, UserProfile } from "@/config/user.modal";
@@ -21,19 +21,43 @@ const ApplicantInformation: React.FC<params> = ({ serviceId }) => {
 
   const [whoApply, setWhoApply] = useState(1);
   const router = useRouter();
-  const dispatch=useAppDispatch();
+  const dispatch = useAppDispatch();
   let serviceState = useAppSelector((state) => state.service.service);
-  
+
 
   const handleValueChange = (value: any) => {
     setWhoApply(value);
-    serviceState = { ...serviceState, requestForId: Number(value)  }
+    serviceState = { ...serviceState, requestForId: Number(value) }
     dispatch(setService(serviceState));
   };
 
 
   const goNext = () => {
     router.push('/services/' + serviceId + '/service-form');
+    let steps = serviceState?.steps;
+    if (steps) {
+      let updatedSteps = steps.map((step, index) => {
+        if (index === 0) {
+          return {
+            ...step,
+            status: 'step-completed'
+          };
+        }
+        else if(index===1){
+          return {
+            ...step,
+            status: 'step-current'
+          };
+        }
+        return step;
+      });
+
+      console.log('wwwww', updatedSteps)
+      serviceState = { ...serviceState, steps: updatedSteps }
+      dispatch(setService(serviceState));
+    }
+  
+
   }
 
 

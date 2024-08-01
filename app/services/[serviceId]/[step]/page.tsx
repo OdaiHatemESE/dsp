@@ -1,6 +1,7 @@
 import ApplicantInformation from "@/components/applicant-information/applicant-information";
 import Attachments from "@/components/attachments";
 import StudyDetails from "../../forms/issuance-and-attestation/study-details";
+import Summary from "@/components/summary";
 
 interface Params {
   params: {
@@ -20,10 +21,10 @@ const DynamicPage: React.FC<Params> = ({ params }) => {
         return <ApplicantInformation serviceId={serviceId} />
       case 'service-form':
         return serviceForm(serviceId);
-      case '3':
-        return <Attachments />;
-      case '4':
-        return 'summary';
+      case 'attachments':
+        return <Attachments  serviceId={serviceId}  />;
+      case 'summary':
+        return <Summary />;
       default:
         return <div>Default Component</div>;
     }

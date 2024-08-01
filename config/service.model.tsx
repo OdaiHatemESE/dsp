@@ -1,3 +1,4 @@
+ 
 import { UserProfile } from "./user.modal";
 
 export interface Service {
@@ -9,14 +10,26 @@ export interface Service {
     serviceNameArabic: string;
     currentStepIndex: number;
     steps:ServiceStep[];
-    form:{}
+    form:{},
+    attachments: AttachmentList[]
     
     
+  }
+
+  export interface AttachmentList {
+    attachmentId: string;
+    attachmentLabel: string;
+    required:boolean,
+    attachmentType: string;
+    attachmentNote:string,
+    attachmentFile?: ArrayBuffer;
+
   }
 
   export interface ServiceStep {
     index: number;
     title: string;
+    status:string;
   }
   
 
@@ -27,9 +40,10 @@ export interface Service {
     serviceName?: string;
     serviceNameArabic?: string;
     currentStepIndex?: number;
+    steps?:ServiceStep[];
     applicantInformation?: UserProfile;
     form?: any;
-    attachment?: [];
+    attachment?:AttachmentList[];
   }
 
 
