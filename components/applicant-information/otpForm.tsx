@@ -6,21 +6,22 @@ import { setApplicant } from '@/store/slices/applicantSlice';
 import React from 'react';
 import { useState, useRef } from 'react';
 
+
 interface params {
     eid: string,
-    mobileNumber:string
-    user?:UserProfile
+    mobileNumber: string
+    user?: UserProfile
 
 }
 
-const OTPForm: React.FC<params> = ({ eid,mobileNumber,user}) => {
+const OTPForm: React.FC<params> = ({ eid, mobileNumber, user }) => {
     const [otp, setOtp] = useState(new Array(4).fill(''));
     const inputsRef = useRef([]);
     const dispatch = useAppDispatch();
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string>();
 
-    const handleChange = (element:any, index:any) => {
+    const handleChange = (element: any, index: any) => {
         const value = element.value.replace(/[^0-9]/g, ''); // Only allow digits
         const newOtp = [...otp];
         newOtp[index] = value;
@@ -32,16 +33,16 @@ const OTPForm: React.FC<params> = ({ eid,mobileNumber,user}) => {
         }
     };
 
-    const handleBackspace = (element:any, index:any) => {
+    const handleBackspace = (element: any, index: any) => {
         if (!element.value && index > 0) {
             inputsRef.current[index - 1].focus();
         }
     };
 
-    const handleSubmit = async (e:any) => {
+    const handleSubmit = async (e: any) => {
         e.preventDefault();
         setIsSubmitting(true);
-        setError(null);
+        setError("");
 
         // Construct the OTP code from the inputs
         const otpCode = otp.join('');
@@ -72,12 +73,12 @@ const OTPForm: React.FC<params> = ({ eid,mobileNumber,user}) => {
             }
 
             const data = await response.json();
-            
-                dispatch(setApplicant(user ?? {} as UserProfile))
-           
+
+            dispatch(setApplicant(user ?? {} as UserProfile))
+
             // Handle successful response
-            
-            
+
+
         } catch (error) {
             console.error('Error validating OTP:', error);
             setError('Failed to validate OTP. Please try again.');
