@@ -21,11 +21,13 @@ interface params {
 const ApplicantInformation: React.FC<params> = ({ serviceId }) => {
 
   const { nextStep } = useStepper();
-   
+
   const [whoApply, setWhoApply] = useState(1);
   const router = useRouter();
   const dispatch = useAppDispatch();
   let serviceState = useAppSelector((state) => state.service.service);
+  const otherApplicant = useAppSelector((state) => state.applicant.applicant);
+  console.log(otherApplicant);
 
 
   const handleValueChange = (value: any) => {
@@ -44,10 +46,11 @@ const ApplicantInformation: React.FC<params> = ({ serviceId }) => {
 
   return (
     <div className="ApplicantInformation">
-
+ 
       <WhoApply requestForId={handleValueChange} />
       <ApplicantDetails requestForId={Number(whoApply)} />
-      <GetUserInfoByEID />
+      {whoApply == 2 && otherApplicant==null && <GetUserInfoByEID />}
+
 
 
       {/* userType */}

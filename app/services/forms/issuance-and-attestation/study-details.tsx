@@ -8,7 +8,7 @@ import * as Yup from 'yup';
 import classNames from 'classnames';
 import { useAppDispatch, useAppSelector } from '@/store/lib/hooks';
 import { setService } from '@/store/slices/serviceSlice';
-import { ServiceForm,StudyDetailsForm } from '@/config/service.model';
+import { ServiceForm, StudyDetailsForm } from '@/config/service.model';
 import { useRouter } from "next/navigation";
 import { useStepper } from '@/components/steper/stepperProvider';
 
@@ -31,7 +31,7 @@ interface params {
 }
 
 const StudyDetails: React.FC<params> = ({ serviceId }) => {
-    const { nextStep,prevStep } = useStepper();
+    const { nextStep, prevStep } = useStepper();
     const router = useRouter();
 
     const serviceState = useAppSelector((state) => state.service.service);
@@ -40,7 +40,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
     console.log(updatedService.form)
     const dispath = useAppDispatch();
 
- 
+
     const [formData, setFormData] = useState<StudyDetailsForm>({
         plan: updatedService.form.plan ?? "1",
         Emirate: updatedService.form.Emirate,
@@ -58,12 +58,12 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
 
     })
 
-    
 
-  
-   const goPrevious = () =>{
-    prevStep();
-   }
+
+
+    const goPrevious = () => {
+        prevStep();
+    }
 
 
     const onSubmit = (data: any) => {
@@ -72,12 +72,12 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
         const service = { ...serviceState, form: data } as ServiceForm;
         dispath(setService(service))
         setFormData(data);
-   nextStep();
+        nextStep();
     };
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            <h5>Request Type</h5>{formData.plan}
+            <h5>Request Type</h5> 
             <p className="text-sm text-gray-500 mt-1">What type of document you request</p>
             <div className="flex flex-col md:flex-row justify-between">
                 <div className="w-full mb-5 md:mb-0">

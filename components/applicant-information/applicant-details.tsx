@@ -11,9 +11,9 @@ interface param {
 
 const ApplicantDetails: React.FC<param> = ({ requestForId }) => {
     
-    const otherApplicant = useAppSelector((state) => state.applicant.applicant);
+    let otherApplicant = useAppSelector((state) => state.applicant.applicant);
     const mainUser = useAppSelector((state) => state.user.user);
-    
+   console.log(otherApplicant);
     const user = requestForId == 1 ? mainUser : otherApplicant;
  
     
@@ -21,6 +21,8 @@ const ApplicantDetails: React.FC<param> = ({ requestForId }) => {
 
     return (
         <section>
+            {user && 
+
             <div className="ApplicantDetails">
                 <h5>Applicant Information</h5>
                 <p className="text-sm text-gray-500 mt-1">
@@ -41,10 +43,11 @@ const ApplicantDetails: React.FC<param> = ({ requestForId }) => {
                     </div>
                     <div className="w-full md:w-1/4">
                         <h6>Email</h6>
-                        <p><span>{user ? user.address.email : "Loading..."}</span></p>
+                        <p><span>{mainUser ? mainUser.address.email : "Loading..."}</span></p>
                     </div>
                 </div>
             </div>
+             }
         </section>
     );
 };
