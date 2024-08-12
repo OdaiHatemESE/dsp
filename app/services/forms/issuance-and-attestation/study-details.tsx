@@ -11,17 +11,19 @@ import { setService } from '@/store/slices/serviceSlice';
 import { ServiceForm, StudyDetailsForm } from '@/config/service.model';
 import { useRouter } from "next/navigation";
 import { useStepper } from '@/components/steper/stepperProvider';
+import Counter from '@/components/counter';
 
 
 const validationSchema = Yup.object().shape({
-    plan: Yup.string(),
-    Emirate: Yup.string().required('Emirate is required'),
-    academicYear: Yup.string().required('Academic year is required'),
-    schoolGrade: Yup.string().required('School grade is required'),
-    schoolName: Yup.string().required('School name is required'),
-    studentNumber: Yup.string(),
-    comments: Yup.string(),
-    MOFAIC: Yup.string().required('MOFAIC attestation choice is required'),
+    RequestTypeId: Yup.string(),
+    NumberOfCopies:Yup.string(),
+    EmirateSchoolId: Yup.string().required('Emirate is required'),
+    AcademicYearId: Yup.string().required('Academic year is required'),
+    GradeId: Yup.string().required('School grade is required'),
+    SchoolName: Yup.string().required('School name is required'),
+    SISNumber: Yup.string(),
+    Comment: Yup.string(),
+    IsMofaicAttested: Yup.boolean()
 });
 
 console.log(validationSchema);
@@ -34,22 +36,26 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
     const { nextStep, prevStep } = useStepper();
     const router = useRouter();
 
+
+
     const serviceState = useAppSelector((state) => state.service.service);
     console.log(serviceState);
     let updatedService = { ...serviceState, form: serviceState?.form ?? {} as StudyDetailsForm }
     console.log(updatedService.form)
     const dispath = useAppDispatch();
-
+    const [count, setCount] = useState<number>();
+ 
 
     const [formData, setFormData] = useState<StudyDetailsForm>({
-        plan: updatedService.form.plan ?? "1",
-        Emirate: updatedService.form.Emirate,
-        academicYear: updatedService.form.academicYear,
-        schoolGrade: updatedService.form.schoolGrade,
-        schoolName: updatedService.form.schoolName,
-        studentNumber: updatedService.form.studentNumber,
-        comments: updatedService.form.comments,
-        MOFAIC: updatedService.form.MOFAIC ?? 'No',
+        RequestTypeId: updatedService.form.RequestTypeId ?? 1,
+        NumberOfCopies: count ?? 0,
+        EmirateSchoolId: updatedService.form.EmirateSchoolId,
+        AcademicYearId: updatedService.form.AcademicYearId,
+        GradeId: updatedService.form.GradeId,
+        SchoolName: updatedService.form.SchoolName,
+        SISNumber: updatedService.form.SISNumber,
+        Comment: updatedService.form.Comment,
+        IsMofaicAttested: updatedService.form.IsMofaicAttested ?? false,
     });
 
     const { register, handleSubmit, formState: { errors } } = useForm({
@@ -65,30 +71,81 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
         prevStep();
     }
 
+    const handleCount = (count: number) => {
+        console.log(count);
+        setCount(count)
+    }
 
-    const onSubmit = (data: any) => {
+    const handleClick = (event:any) =>{
+    
+            const id = event.target.id;
+            console.log(id);
+            switch (id) {
+                case 'yesMOFAIC':
+                     
+                    setFormData((prev) => ({
+                        ...prev,
+                        IsMofaicAttested: true
+                    }));
+                    break;
+                case 'noMOFAIC':
+                    
+                    setFormData((prev) => ({
+                        ...prev,
+                        IsMofaicAttested: false
+                    }));
+                    break;
+                case 'softCopy':
+                   
+                    setFormData((prev) => ({
+                        ...prev,
+                        RequestTypeId: 1
+                    }));
+                    break;
+                case 'hardCopy':
+                   
+                    setFormData((prev) => ({
+                        ...prev,
+                        RequestTypeId: 2
+                    }));
+                    break;
+                default:
+                    break;
+            }
+        
+        
+    }
+    const onSubmit = (data: any, event: any) => {
         // console.clear();
         // //  console.log('Form submitted:', data);
+        const buttonClicked = event.nativeEvent.submitter.name
         const service = { ...serviceState, form: data } as ServiceForm;
+
         dispath(setService(service))
         setFormData(data);
-        nextStep();
+        if (buttonClicked == 'next') {
+            nextStep();
+        } else {
+            prevStep();
+        }
+
     };
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            <h5>Request Type</h5> 
+            <h5>Request Type</h5>
             <p className="text-sm text-gray-500 mt-1">What type of document you request</p>
             <div className="flex flex-col md:flex-row justify-between">
                 <div className="w-full mb-5 md:mb-0">
                     <div className="aegov-check-group">
                         <input
                             id="softCopy"
-                            aria-describedby="softCopy-description"
+                            aria-describedby= "softCopy-description"
                             type="radio"
-                            value={"1"}
-                            checked={formData.plan == "1"}
-                            {...register('plan')} />
+                            value={1}
+                            onClick={handleClick}
+                            checked={formData.RequestTypeId == 1}
+                            {...register('RequestTypeId')} />
                         <div>
                             <label htmlFor="softCopy">Soft Copy</label>
                             <p id="softCopy-description" className="text-sm text-gray-500 mt-1">
@@ -97,81 +154,84 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                         </div>
                     </div>
                 </div>
+              
                 <div className="w-full mb-5">
                     <div className="aegov-check-group">
                         <input
                             id="hardCopy"
                             aria-describedby="hardCopy-description"
                             type="radio"
-                            value={"2"}
-                            checked={formData.plan == "2"}
-                            {...register('plan')} />
+                            value={2}
+                            onClick={handleClick}
+                            checked={formData.RequestTypeId == 2}
+                            {...register('RequestTypeId')} />
                         <div>
                             <label htmlFor="hardCopy">Hard Copy</label>
                             <p id="hardCopy-description" className="text-sm text-gray-500 mt-1">
                                 (You will receive the document as a hard copy and it will have additional charge 15 AED delivery)
                             </p>
+                            {formData.RequestTypeId == 2 && <Counter onCountChange={handleCount} />}
                         </div>
                     </div>
                 </div>
             </div>
-            {errors.plan && <span className='error-message'>{errors.plan.message}</span>}
+            {errors.RequestForId && <span className='error-message'>{errors.RequestForId.message}</span>}
             <hr className="mb-5 mt-5" />
 
             <h5>Study Details</h5>
             <p className="text-sm text-gray-500 mt-1">User Study Details</p>
             <div className="w-full mb-5">
-                <div className={classNames({ "control-error": errors.Emirate }, 'aegov-form-control')} >
+                <div className={classNames({ "control-error": errors.EmirateSchoolId }, 'aegov-form-control')} >
                     <label htmlFor="Emirate">Emirate</label>
                     <div className="form-control-input">
-                        <select id="Emirate" {...register('Emirate')} >
+                        <select id="Emirate" {...register('EmirateSchoolId')} >
                             <option value="">Select...</option>
                             <option value="option1">option 1</option>
                             <option value="option2">option 2</option>
                             <option value="option3">option 3</option>
                         </select>
                     </div>
-                    {errors.Emirate && <span className='error-message'>{errors.Emirate.message}</span>}
+                    {errors.EmirateSchoolId && <span className='error-message'>{errors.EmirateSchoolId.message}</span>}
                 </div>
             </div>
 
             <div className="w-full mb-5">
-                <div className={classNames({ "control-error": errors.academicYear }, 'aegov-form-control')}>
+                <div className={classNames({ "control-error": errors.AcademicYearId }, 'aegov-form-control')}>
                     <label htmlFor="academicYear">Academic year</label>
                     <div className="form-control-input">
-                        <select id="academicYear" {...register('academicYear')} >
+                        <select id="academicYear" {...register('AcademicYearId')} >
                             <option value="">Select...</option>
                             <option value="option1">option 1</option>
                             <option value="option2">option 2</option>
                             <option value="option3">option 3</option>
                         </select>
                     </div>
-                    {errors.academicYear && <span className='error-message'>{errors.academicYear.message}</span>}
+                    {errors.AcademicYearId && <span className='error-message'>{errors.AcademicYearId.message}</span>}
                 </div>
             </div>
 
             <div className="w-full mb-5">
-                <div className={classNames({ "control-error": errors.schoolGrade }, 'aegov-form-control')} >
+                <div className={classNames({ "control-error": errors.GradeId }, 'aegov-form-control')} >
                     <label htmlFor="schoolGrade">School Grade</label>
                     <div className="form-control-input">
-                        <select id="schoolGrade" {...register('schoolGrade')}  >
+                        <select id="schoolGrade" {...register('GradeId')}  >
                             <option value="">Select...</option>
                             <option value="option1">option 1</option>
                             <option value="option2">option 2</option>
                             <option value="option3">option 3</option>
                         </select>
                     </div>
-                    {errors.schoolGrade && <span className='error-message'>{errors.schoolGrade.message}</span>}
+                    {errors.GradeId && <span className='error-message'>{errors.GradeId.message}</span>}
                 </div>
             </div>
 
             <div className="w-full mb-5">
-                <div className={classNames({ "control-error": errors.schoolName }, 'aegov-form-control')}>
+                <div className={classNames({ "control-error": errors.SchoolName }, 'aegov-form-control')}>
                     <label htmlFor="schoolName">School Name</label>
                     <div className="form-control-input">
-                        <input type="text" id="schoolName" {...register('schoolName')} />
+                        <input type="text" id="schoolName" {...register('SchoolName')} />
                     </div>
-                    {errors.schoolName && <span className='error-message'>{errors.schoolName.message}</span>}
+                    {errors.SchoolName && <span className='error-message'>{errors.SchoolName.message}</span>}
                 </div>
             </div>
 
@@ -181,7 +241,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                         Student Number <small className="text-gray-400">(Optional)</small>
                     </label>
                     <div className="form-control-input">
-                        <input type="text" id="studentNumber" {...register('studentNumber')} />
+                        <input type="text" id="studentNumber" {...register('SISNumber')} />
                     </div>
                 </div>
             </div>
@@ -194,10 +254,10 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                     <div className="form-control-input">
                         <textarea
                             id="comments"
-                            {...register('comments')}
+                            {...register('Comment')}
                             cols={10}
                             rows={10}
-                            value={formData.comments}
+                            value={formData.Comment}
 
                             placeholder="Example: I am submitting the application for a student who does not have an ID. I need a printed paper copy for use outside the country."
                         ></textarea>
@@ -215,8 +275,10 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                             id="yesMOFAIC"
                             aria-describedby="yesMOFAIC-description"
                             type="radio"
-                            value={formData.MOFAIC}
-                            {...register('MOFAIC')}
+                            value={true}
+                            onClick={handleClick}
+                            checked={formData.IsMofaicAttested==true}
+                            {...register('IsMofaicAttested')}
                         />
                         <div>
                             <label htmlFor="yesMOFAIC">Yes</label>
@@ -232,8 +294,10 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                             id="noMOFAIC"
                             aria-describedby="noMOFAIC-description"
                             type="radio"
-                            value={formData.MOFAIC}
-                            {...register('MOFAIC')}
+                            onClick={handleClick}
+                            value={false}
+                            checked={formData.IsMofaicAttested==false}
+                            {...register('IsMofaicAttested')}
                         />
                         <div>
                             <label htmlFor="noMOFAIC">No</label>
@@ -244,10 +308,10 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                     </div>
                 </div>
             </div>
-            {errors.MOFAIC && <span>{errors.MOFAIC.message}</span>}
+            {errors.IsMofaicAttested && <span>{errors.IsMofaicAttested.message}</span>}
 
             <div className="w-full actions mt-10 flex flex-row justify-between flex-wrap">
-                <button className="aegov-btn btn-lg" type="button" onClick={goPrevious}>
+                <button className="aegov-btn btn-lg" type="submit" name="prev" >
 
                     <svg
                         className="rtl:-scale-x-100 rotate-180"
@@ -278,7 +342,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
 
                     Previous
                 </button>
-                <button className="aegov-btn btn-lg" type="submit">
+                <button className="aegov-btn btn-lg" type="submit" name="next">
                     Next
                     <svg
                         className="rtl:-scale-x-100"
