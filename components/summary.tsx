@@ -1,15 +1,53 @@
 'use client';
+import { useAppSelector } from "@/store/lib/hooks";
 import { useStepper } from "./steper/stepperProvider";
 
+
+
 const Summary: React.FC = () => {
+
+    const serviceState = useAppSelector((state) => state.service.service); // Get Service State  
 
     const { nextStep, prevStep } = useStepper();
     const goPrevious = () => {
         prevStep();
     }
+    console.log(serviceState);
     return (
-        <div>
 
+        <div>
+            <table className="min-w-full bg-white border border-gray-200 rounded-lg ">
+                <tbody>
+                    <tr className="bg-gray-100 border-b border-gray-200">
+                        <td className="px-6 py-4 font-bold text-gray-700">Emirate ID</td>
+                        <td className="px-6 py-4 text-gray-600">{serviceState?.applicantInformation?.emiratesId}</td>
+                    </tr>
+                    <tr className="border-b border-gray-200">
+                        <td className="px-6 py-4 font-bold text-gray-700">Name</td>
+                        <td className="px-6 py-4 text-gray-600">{serviceState?.applicantInformation?.fullNameEn}</td>
+                    </tr>
+                    <tr className="bg-gray-100 border-b border-gray-200">
+                        <td className="px-6 py-4 font-bold text-gray-700">Gender</td>
+                        <td className="px-6 py-4 text-gray-600">{serviceState?.applicantInformation?.genderId == 1 ? 'Male' : 'Female'}</td>
+                    </tr>
+                    <tr className="border-b border-gray-200">
+                        <td className="px-6 py-4 font-bold text-gray-700">Mobile Number</td>
+                        <td className="px-6 py-4 text-gray-600">{serviceState?.applicantInformation?.address.mobileNumber}</td>
+                    </tr>
+                    <tr className="bg-gray-100 border-b border-gray-200">
+                        <td className="px-6 py-4 font-bold text-gray-700">Email</td>
+                        <td className="px-6 py-4 text-gray-600">{serviceState?.applicantInformation?.address.email}</td>
+                    </tr>
+                    <tr className="border-b border-gray-200">
+                        <td className="px-6 py-4 font-bold text-gray-700">Nationality</td>
+                        <td className="px-6 py-4 text-gray-600">{serviceState?.applicantInformation?.nationality.titleEn}</td>
+                    </tr>
+                    <tr className="bg-gray-100">
+                        <td className="px-6 py-4 font-bold text-gray-700">User Type</td>
+                        <td className="px-6 py-4 text-gray-600">{/* Add content for User Type here */}</td>
+                    </tr>
+                </tbody>
+            </table>
             <div className="w-full actions mt-10 flex flex-row justify-between flex-wrap">
                 <button className="aegov-btn btn-lg" type="button" onClick={goPrevious}>
 
