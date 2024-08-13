@@ -100,9 +100,9 @@ export interface Address {
 
 
 export interface StudyDetailsForm {
-  ApplicationId?: string; // integer($int64)
-  ApplicantId?: string; // integer($int32)
-  RequestForId?: string; // integer($int32)
+  ApplicationId?: number; // integer($int64)
+  ApplicantId?: number; // integer($int32)
+  RequestForId?: number; // integer($int32)
   RelationshipId?: string; // integer($int32) - optional if not always present
   EmirateId?: string; // integer($int32)
   EmirateSchoolId?: string; // integer($int32)

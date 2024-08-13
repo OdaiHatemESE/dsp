@@ -1,35 +1,43 @@
-export interface generalLookups{
-    AcademicYear:AcademicYear[],
-    Age:[],
-    ApplicationDefinition:[],
-    ApplicationStatus:[],
-    ApplicationTypeRequest:[],
-    Currency:[],
-    DocumentDefinition:[],
-    EducationType:[],
-    EducationZone:[],
-    Emirate:Emirate[],
-    Grade:Grade[],
-    Nationality:[],
-    NationalityMofaic:[],
-    Region:[],
-    Relationship:[],
-    RequestFor:[],
-    RequestType:[],
-    StudyPeriod:[],
-    UserType:[]
+export interface generalLookups {
+    AcademicYear: AcademicYear[],
+    Age: [],
+    ApplicationDefinition: [],
+    ApplicationStatus: [],
+    ApplicationTypeRequest: [],
+    Currency: [],
+    DocumentDefinition: [],
+    EducationType: [],
+    EducationZone: [],
+    Emirate: Emirate[],
+    Grade: Grade[],
+    Nationality: [],
+    NationalityMofaic: mofaic[],
+    Region: [],
+    Relationship: [],
+    RequestFor: [],
+    RequestType: [],
+    StudyPeriod: [],
+    UserType: []
 }
 
-interface Emirate{
-    id:number,
-    titleAr:String,
-    titleEn:string
+interface Emirate {
+    id: number,
+    titleAr: String,
+    titleEn: string
 }
 
-interface AcademicYear{
-    id:number,
-    titleAr:String,
-    titleEn:string
+interface AcademicYear {
+    id: number,
+    titleAr: String,
+    titleEn: string
+}
+
+interface mofaic {
+    active: String,
+    countryCode: String,
+    countryName: String,
+    countryNameAr: String,
+    id: number
 }
 
 
@@ -48,4 +56,4 @@ interface Grade {
     modifiedOn: string | null;
     titleAr: string;
     titleEn: string;
-  }
+}
