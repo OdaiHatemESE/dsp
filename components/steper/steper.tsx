@@ -14,7 +14,7 @@ const Stepper: React.FC<params> = ({ serviceId }) => {
   const { currentStepIndex, steps, getStepClass } = useStepper();
 
   // Get the current step component
-  console.log(steps[currentStepIndex])
+  
   const CurrentStepComponent = steps[currentStepIndex].component;
 
   return (

@@ -13,7 +13,7 @@ const ApplicantDetails: React.FC<param> = ({ requestForId }) => {
     
     let otherApplicant = useAppSelector((state) => state.applicant.applicant);
     const mainUser = useAppSelector((state) => state.user.user);
-   console.log(otherApplicant);
+   
     const user = requestForId == 1 ? mainUser : otherApplicant;
  
     

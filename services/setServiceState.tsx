@@ -27,7 +27,7 @@ const setServiceState = ({ serviceId, whoApply }: Params) => {
       // This is new mode
       const service = ServiceConfig.find(service => service.serviceId === serviceId);
       let updatedserviceState = serviceState ?? {} as ServiceForm;
-      console.log('lodo',updatedserviceState.form)
+   
       updatedserviceState = {
         id: service?.id ?? '',
         requestForId: Number(whoApply),

@@ -80,7 +80,7 @@ const OTPForm: React.FC<params> = ({ eid, mobileNumber, user }) => {
 
 
         } catch (error) {
-            console.error('Error validating OTP:', error);
+            
             setError('Failed to validate OTP. Please try again.');
         } finally {
             setIsSubmitting(false);

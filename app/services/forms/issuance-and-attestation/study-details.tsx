@@ -1,7 +1,7 @@
 
 'use client'
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as Yup from 'yup';
@@ -12,21 +12,34 @@ import { ServiceForm, StudyDetailsForm } from '@/config/service.model';
 import { useRouter } from "next/navigation";
 import { useStepper } from '@/components/steper/stepperProvider';
 import Counter from '@/components/counter';
-
+import { useGeneralLookups } from '@/lookups/lookupService';
+import { getStudentInfo } from '@/services/getStudentInfo';
+import Spinner from '@/components/spinner';
 
 const validationSchema = Yup.object().shape({
     RequestTypeId: Yup.string(),
-    NumberOfCopies:Yup.string(),
+    NumberOfCopies: Yup.string(),
     EmirateSchoolId: Yup.string().required('Emirate is required'),
     AcademicYearId: Yup.string().required('Academic year is required'),
     GradeId: Yup.string().required('School grade is required'),
     SchoolName: Yup.string().required('School name is required'),
     SISNumber: Yup.string(),
     Comment: Yup.string(),
-    IsMofaicAttested: Yup.boolean()
+    IsMofaicAttested: Yup.bool(),
+    DestinationCountryId: Yup.string().test(
+        'is-required-if-mofaic-attested',
+        'Destination country is required when MOFAIC attestation is selected',
+        function (value) {
+            const { IsMofaicAttested } = this.parent;
+            if (IsMofaicAttested) {
+                return !!value; // Return true if value is provided, false otherwise
+            }
+            return true; // No validation needed if IsMofaicAttested is false
+        }
+    ),
 });
 
-console.log(validationSchema);
+
 
 interface params {
     serviceId: string
@@ -38,14 +51,28 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
 
 
 
-    const serviceState = useAppSelector((state) => state.service.service);
-    console.log(serviceState);
-    let updatedService = { ...serviceState, form: serviceState?.form ?? {} as StudyDetailsForm }
-    console.log(updatedService.form)
+
+
+    const serviceState = useAppSelector((state) => state.service.service); // Get Service State  
+
+    let updatedService = { ...serviceState, form: serviceState?.form ?? {} as StudyDetailsForm } 
+
     const dispath = useAppDispatch();
     const [count, setCount] = useState<number>();
- 
 
+
+
+
+    const { lookups, isLoading, isError } = useGeneralLookups();
+    const { studentInfo, isLoadingInfo, isErrorInfo } = getStudentInfo();
+
+
+    const emirates = lookups?.Emirate;
+    const schoolGrades = lookups?.Grade;
+    const academicYearList = lookups?.AcademicYear;
+
+
+    console.log('no effect')
     const [formData, setFormData] = useState<StudyDetailsForm>({
         RequestTypeId: updatedService.form.RequestTypeId ?? 1,
         NumberOfCopies: count ?? 0,
@@ -56,9 +83,42 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
         SISNumber: updatedService.form.SISNumber,
         Comment: updatedService.form.Comment,
         IsMofaicAttested: updatedService.form.IsMofaicAttested ?? false,
+        DestinationCountryId: updatedService.form.DestinationCountryId
     });
 
-    const { register, handleSubmit, formState: { errors } } = useForm({
+
+    useEffect(() => {
+        if (studentInfo && lookups) {
+            // Handle student information if necessary
+            console.log('effect')
+            if (studentInfo.studentNumber) {
+                let updatedFormData: StudyDetailsForm = {
+                    ...formData,
+                    SISNumber: formData.SISNumber ?? studentInfo.studentNumber,
+                    EmirateSchoolId: formData.EmirateSchoolId ?? studentInfo.emirateId,
+                    SchoolName: formData.SchoolName ?? studentInfo.schoolNameEn,
+                    GradeId: formData.GradeId ?? studentInfo.gradeId
+                };
+
+                // Update local formData state
+                setFormData(updatedFormData);
+                setValue('SISNumber', updatedFormData.SISNumber);
+                setValue('EmirateSchoolId', updatedFormData.EmirateSchoolId);
+                setValue('SchoolName', updatedFormData.SchoolName);
+                setValue('GradeId', updatedFormData.GradeId);
+
+                // Dispatch the updated service to the store
+                const updatedService = { ...serviceState, form: updatedFormData } as ServiceForm;
+                dispath(setService(updatedService));
+            }
+        }
+    }, [studentInfo, lookups]);
+
+
+
+
+    const [IsMofaicAttested, setIsMofaicAttested] = useState<boolean>(false);
+    const { register, handleSubmit, formState: { errors }, setValue } = useForm({
         resolver: yupResolver(validationSchema),
         defaultValues: formData
 
@@ -72,52 +132,53 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
     }
 
     const handleCount = (count: number) => {
-        console.log(count);
+
         setCount(count)
     }
 
-    const handleClick = (event:any) =>{
-    
-            const id = event.target.id;
-            console.log(id);
-            switch (id) {
-                case 'yesMOFAIC':
-                     
-                    setFormData((prev) => ({
-                        ...prev,
-                        IsMofaicAttested: true
-                    }));
-                    break;
-                case 'noMOFAIC':
-                    
-                    setFormData((prev) => ({
-                        ...prev,
-                        IsMofaicAttested: false
-                    }));
-                    break;
-                case 'softCopy':
-                   
-                    setFormData((prev) => ({
-                        ...prev,
-                        RequestTypeId: 1
-                    }));
-                    break;
-                case 'hardCopy':
-                   
-                    setFormData((prev) => ({
-                        ...prev,
-                        RequestTypeId: 2
-                    }));
-                    break;
-                default:
-                    break;
-            }
-        
-        
+    const handleClick = (event: any) => {
+
+        const id = event.target.id;
+
+        switch (id) {
+            case 'yesMOFAIC':
+
+                setFormData((prev) => ({
+                    ...prev,
+                    IsMofaicAttested: true
+                }));
+                setIsMofaicAttested(true)
+                break;
+            case 'noMOFAIC':
+
+                setFormData((prev) => ({
+                    ...prev,
+                    IsMofaicAttested: false
+                }));
+                setIsMofaicAttested(false)
+                break;
+            case 'softCopy':
+
+                setFormData((prev) => ({
+                    ...prev,
+                    RequestTypeId: 1
+                }));
+                break;
+            case 'hardCopy':
+
+                setFormData((prev) => ({
+                    ...prev,
+                    RequestTypeId: 2
+                }));
+                break;
+            default:
+                break;
+        }
+
+
     }
     const onSubmit = (data: any, event: any) => {
-        // console.clear();
-        // //  console.log('Form submitted:', data);
+
         const buttonClicked = event.nativeEvent.submitter.name
         const service = { ...serviceState, form: data } as ServiceForm;
 
@@ -131,6 +192,11 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
 
     };
 
+
+    if (isLoading || isLoadingInfo) return <Spinner></Spinner>;
+    if (isError || isErrorInfo) return <div>Error loading </div>;
+
+
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <h5>Request Type</h5>
@@ -140,7 +206,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                     <div className="aegov-check-group">
                         <input
                             id="softCopy"
-                            aria-describedby= "softCopy-description"
+                            aria-describedby="softCopy-description"
                             type="radio"
                             value={1}
                             onClick={handleClick}
@@ -154,7 +220,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                         </div>
                     </div>
                 </div>
-              
+
                 <div className="w-full mb-5">
                     <div className="aegov-check-group">
                         <input
@@ -185,10 +251,10 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                     <label htmlFor="Emirate">Emirate</label>
                     <div className="form-control-input">
                         <select id="Emirate" {...register('EmirateSchoolId')} >
-                            <option value="">Select...</option>
-                            <option value="option1">option 1</option>
-                            <option value="option2">option 2</option>
-                            <option value="option3">option 3</option>
+                            <option value={''}>Please Select</option>
+                            {emirates?.map((emr) => {
+                                return <option key={emr.id} value={emr.id} >{emr.titleEn}</option>
+                            })}
                         </select>
                     </div>
                     {errors.EmirateSchoolId && <span className='error-message'>{errors.EmirateSchoolId.message}</span>}
@@ -200,11 +266,12 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                     <label htmlFor="academicYear">Academic year</label>
                     <div className="form-control-input">
                         <select id="academicYear" {...register('AcademicYearId')} >
-                            <option value="">Select...</option>
-                            <option value="option1">option 1</option>
-                            <option value="option2">option 2</option>
-                            <option value="option3">option 3</option>
+                            <option value={''}>Please Select</option>
+                            {academicYearList?.map((year) => {
+                                return <option key={year.id} value={year.id}>{year.titleEn}</option>
+                            })}
                         </select>
+
                     </div>
                     {errors.AcademicYearId && <span className='error-message'>{errors.AcademicYearId.message}</span>}
                 </div>
@@ -215,10 +282,11 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                     <label htmlFor="schoolGrade">School Grade</label>
                     <div className="form-control-input">
                         <select id="schoolGrade" {...register('GradeId')}  >
-                            <option value="">Select...</option>
-                            <option value="option1">option 1</option>
-                            <option value="option2">option 2</option>
-                            <option value="option3">option 3</option>
+                            <option value={''}>Please Select</option>
+                            {schoolGrades?.map((grade) => {
+                                return <option key={grade.id} value={grade.id}>{grade.titleEn}</option>
+
+                            })}
                         </select>
                     </div>
                     {errors.GradeId && <span className='error-message'>{errors.GradeId.message}</span>}
@@ -277,7 +345,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                             type="radio"
                             value={true}
                             onClick={handleClick}
-                            checked={formData.IsMofaicAttested==true}
+                            checked={formData.IsMofaicAttested == true}
                             {...register('IsMofaicAttested')}
                         />
                         <div>
@@ -296,7 +364,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                             type="radio"
                             onClick={handleClick}
                             value={false}
-                            checked={formData.IsMofaicAttested==false}
+                            checked={formData.IsMofaicAttested == false}
                             {...register('IsMofaicAttested')}
                         />
                         <div>
@@ -308,6 +376,23 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                     </div>
                 </div>
             </div>
+            {formData.IsMofaicAttested &&
+                <div className="w-full mb-5">
+                    <div className={classNames({ "control-error": errors.DestinationCountryId }, 'aegov-form-control')} >
+                        <label htmlFor="schoolGrade">Select country to attest for</label>
+                        <div className="form-control-input">
+                            <select id="schoolGrade" {...register('DestinationCountryId')}  >
+                                <option value={''}>Please Select</option>
+                                {schoolGrades?.map((grade) => {
+                                    return <option key={grade.id} value={grade.id}>{grade.titleEn}</option>
+
+                                })}
+                            </select>
+                        </div>
+                        {errors.DestinationCountryId && <span className='error-message'>{errors.DestinationCountryId.message}</span>}
+                    </div>
+                </div>
+            }
             {errors.IsMofaicAttested && <span>{errors.IsMofaicAttested.message}</span>}
 
             <div className="w-full actions mt-10 flex flex-row justify-between flex-wrap">

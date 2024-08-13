@@ -84,7 +84,7 @@ export default UpdateInfoForm;
 //     ]; // Add more countries as needed
 
 //     const onSubmit = (data: FormData) => {
-//         console.log(data);
+//         
 //     };
 
 //     return (

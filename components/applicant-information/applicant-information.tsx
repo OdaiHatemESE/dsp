@@ -27,7 +27,7 @@ const ApplicantInformation: React.FC<params> = ({ serviceId }) => {
   const dispatch = useAppDispatch();
   let serviceState = useAppSelector((state) => state.service.service);
   const otherApplicant = useAppSelector((state) => state.applicant.applicant);
-  console.log(otherApplicant);
+  
 
 
   const handleValueChange = (value: any) => {

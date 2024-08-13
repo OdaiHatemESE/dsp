@@ -75,7 +75,7 @@ const Attachments: React.FC<Params> = ({ serviceId }) => {
                 const reader = new FileReader();
                 reader.onload = () => {
                     const result = reader.result as ArrayBuffer;
-                    console.log(result);
+                    
                     resolve(result);
                 };
                 reader.onerror = () => {
@@ -101,7 +101,7 @@ const Attachments: React.FC<Params> = ({ serviceId }) => {
 
         serviceState = { ...serviceState, attachment: updatedAttachments };
         dispatch(setService(serviceState));
-        console.log(serviceState);
+       
         nextStep();
     }
 

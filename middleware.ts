@@ -20,7 +20,7 @@ export async function middleware(req: NextRequest) {
       // Check if the token is expired
       if (decodedToken.exp < currentTime) {
         // Log the expired token
-        console.log('Expired token:', token);
+      
 
         // Create a response to delete the authToken cookie
         const response = NextResponse.redirect(LoginURL);
@@ -37,7 +37,7 @@ export async function middleware(req: NextRequest) {
       }
     } catch (error) {
       // Log an error if decoding the token fails
-      console.error('Failed to decode token:', error);
+      
 
       // Redirect to the login URL with the current URL as a query parameter in case of an error
       const url = new URL(LoginURL);

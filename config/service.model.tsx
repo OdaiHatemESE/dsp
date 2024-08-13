@@ -100,33 +100,33 @@ export interface Address {
 
 
 export interface StudyDetailsForm {
-    ApplicationId?: number; // integer($int64)
-    ApplicantId?: number; // integer($int32)
-    RequestForId?: number; // integer($int32)
-    RelationshipId?: number; // integer($int32) - optional if not always present
-    EmirateId?: number; // integer($int32)
-    EmirateSchoolId?: number; // integer($int32)
-    RegionId?: number; // integer($int32)
-    RequestTypeId?: number; // integer($int32)
-    NumberOfCopies?: number; // integer($int32)
-    GradeId?: number; // integer($int32)
-    AcademicYearId?: number; // integer($int32)
-    SourceChannel?: number; // integer($int32) - optional if not always present
-    EmiratesIDNumber?: string;
-    StreetNumber?: string;
-    HouseNumber?: string;
-    SchoolName?: string;
-    Comment?: string;
-    SISNumber?: string;
-    IsLastStep?: boolean; // optional if not always present
-    IsMofaicAttested?: boolean; // optional if not always present
-    DestinationCountryId?: number; // integer($int32) - optional if not always present
-    PayButton?: boolean;
-    consent?: boolean; // optional new field
-    sisstudentcontrol?: object; // optional new field, replace with the correct type if known
-    haveEmiratesId?: boolean; // optional new field
-    PreviousAttachments?: any; // optional new field, replace with the correct type if known
-  }
+  ApplicationId?: string; // integer($int64)
+  ApplicantId?: string; // integer($int32)
+  RequestForId?: string; // integer($int32)
+  RelationshipId?: string; // integer($int32) - optional if not always present
+  EmirateId?: string; // integer($int32)
+  EmirateSchoolId?: string; // integer($int32)
+  RegionId?: number; // integer($int32)
+  RequestTypeId?: number; // integer($int32)
+  NumberOfCopies?: number; // integer($int32)
+  GradeId?: string; // integer($int32)
+  AcademicYearId?: number; // integer($int32)
+  SourceChannel?: number; // integer($int32) - optional if not always present
+  EmiratesIDNumber?: string;
+  StreetNumber?: string;
+  HouseNumber?: string;
+  SchoolName?: string;
+  Comment?: string;
+  SISNumber?: string;
+  IsLastStep?: boolean; // optional if not always present
+  IsMofaicAttested?: boolean; // optional if not always present
+  DestinationCountryId?: number; // integer($int32) - optional if not always present
+  PayButton?: boolean;
+  consent?: boolean; // optional new field
+  sisstudentcontrol?: object; // optional new field, replace with the correct type if known
+  haveEmiratesId?: boolean; // optional new field
+  PreviousAttachments?: any; // optional new field, replace with the correct type if known
+}
 
 
 
@@ -151,4 +151,15 @@ export interface UpdateStudentForm {
   BirthOfDate: string; // Using string to represent the date
   EmiratesIDNumber: string; // Assuming this might be a number or alphanumeric
   ApplicantId: number;
+}
+
+export interface StudenInfoFromManhal {
+  response: {
+    emirateId: string
+    gradeId: string
+    schoolCode: string
+    schoolNameAr: string
+    schoolNameEn: string
+    studentNumber: string
+  }
 }

@@ -23,13 +23,13 @@ interface StepperProviderProps {
 }
 
 export const StepperProvider: React.FC<StepperProviderProps> = ({ children, initialSteps, serviceId }) => {
-  console.log(serviceId);
+ 
   
   // Initialize steps and current step index state
   const [steps, setSteps] = useState<ServiceStep[]>(initialSteps || []);
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
 
-  console.log(steps);
+  
 
   // Function to add a dynamic step
   const addDynamicStep = (step: ServiceStep) => {
