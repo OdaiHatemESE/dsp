@@ -5,6 +5,7 @@ import Attachments from "@/components/attachments";
 import Summary from "@/components/summary";
 import UpdateInfoForm from "@/app/services/forms/update-student-info/update-info-form";
 import ShippingAddress from "@/components/shipping-address";
+import issuanceSummary from "@/app/services/forms/issuance-and-attestation/issuance-summary";
 
 const Issuance_and_attestation__applicationDefinitionId = 1;
 
@@ -45,6 +46,7 @@ export const ServiceConfig: Service[] = [
          }
       ],
       form: {} as StudyDetailsForm,
+      summary:issuanceSummary,
       attachments: [
          {
             attachmentId: '2022',
@@ -105,6 +107,7 @@ export const ServiceConfig: Service[] = [
          }
       ],
       form: {} as UpdateStudentForm,
+      summary:issuanceSummary,
       attachments: [
          {
             attachmentId: '2022',

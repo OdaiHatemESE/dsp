@@ -1,53 +1,107 @@
 'use client';
 import { useAppSelector } from "@/store/lib/hooks";
 import { useStepper } from "./steper/stepperProvider";
+import { ServiceConfig } from "@/config/services-config";
+import { useGeneralLookups } from "@/lookups/lookupService";
+import Spinner from "./spinner";
+import { StudyDetailsForm } from "@/config/service.model";
+import { UserProfile } from "@/config/user.modal";
 
+interface params {
+    serviceId: string
+}
 
-
-const Summary: React.FC = () => {
+const Summary: React.FC<params> = ({ serviceId }) => {
 
     const serviceState = useAppSelector((state) => state.service.service); // Get Service State  
+    const service = ServiceConfig.find((service) => service.serviceId === serviceId);
+    const studyDetails: StudyDetailsForm = serviceState?.form;
+
+    const { lookups, isLoading, isError } = useGeneralLookups();
+
+    if (isLoading) return <Spinner></Spinner>;
+    if (isError) return <div>Error loading </div>;
+
 
     const { nextStep, prevStep } = useStepper();
     const goPrevious = () => {
         prevStep();
     }
     console.log(serviceState);
-    return (
 
-        <div>
-            <table className="min-w-full bg-white border border-gray-200 rounded-lg ">
-                <tbody>
-                    <tr className="bg-gray-100 border-b border-gray-200">
-                        <td className="px-6 py-4 font-bold text-gray-700">Emirate ID</td>
-                        <td className="px-6 py-4 text-gray-600">{serviceState?.applicantInformation?.emiratesId}</td>
-                    </tr>
-                    <tr className="border-b border-gray-200">
-                        <td className="px-6 py-4 font-bold text-gray-700">Name</td>
-                        <td className="px-6 py-4 text-gray-600">{serviceState?.applicantInformation?.fullNameEn}</td>
-                    </tr>
-                    <tr className="bg-gray-100 border-b border-gray-200">
-                        <td className="px-6 py-4 font-bold text-gray-700">Gender</td>
-                        <td className="px-6 py-4 text-gray-600">{serviceState?.applicantInformation?.genderId == 1 ? 'Male' : 'Female'}</td>
-                    </tr>
-                    <tr className="border-b border-gray-200">
-                        <td className="px-6 py-4 font-bold text-gray-700">Mobile Number</td>
-                        <td className="px-6 py-4 text-gray-600">{serviceState?.applicantInformation?.address.mobileNumber}</td>
-                    </tr>
-                    <tr className="bg-gray-100 border-b border-gray-200">
-                        <td className="px-6 py-4 font-bold text-gray-700">Email</td>
-                        <td className="px-6 py-4 text-gray-600">{serviceState?.applicantInformation?.address.email}</td>
-                    </tr>
-                    <tr className="border-b border-gray-200">
-                        <td className="px-6 py-4 font-bold text-gray-700">Nationality</td>
-                        <td className="px-6 py-4 text-gray-600">{serviceState?.applicantInformation?.nationality.titleEn}</td>
-                    </tr>
-                    <tr className="bg-gray-100">
-                        <td className="px-6 py-4 font-bold text-gray-700">User Type</td>
-                        <td className="px-6 py-4 text-gray-600">{/* Add content for User Type here */}</td>
-                    </tr>
-                </tbody>
-            </table>
+    const lookupField = (key: string, value: any) => {
+        switch (key) {
+            case "RequestTypeId": { return value == 1 ? 'Soft Copy' : 'Hard Copy' }
+            case "EmirateSchoolId": { return lookups?.Emirate.find((item) => item.id == value)?.titleEn; }
+            case "AcademicYearId": { return lookups?.AcademicYear.find((item) => item.id == value)?.titleEn }
+            case "GradeId": { return lookups?.Grade.find((item) => item.id == value)?.titleEn || "" }
+            case "RequestForId": { return value == 1 ? 'For Me' : 'For Another person' }
+            default:
+                return value;
+        }
+    };
+    return (
+        <section>
+            <h1 className="text-xl mb-5">Applicant Information</h1>
+            <div className="bg-white border border-gray-200 rounded-lg">
+    <div className="flex flex-wrap">
+        <div className="w-full sm:w-2/2 md:w-3/3 lg:w-2/4 p-4 border-b border-gray-200 flex">
+            <div className="w-1/2 font-bold text-gray-700">Emirate ID</div>
+            <div className="w-1/2 text-gray-600">{serviceState?.applicantInformation?.emiratesId}</div>
+        </div>
+        <div className="w-full sm:w-2/2 md:w-3/3 lg:w-2/4 p-4 border-b border-gray-200 flex">
+            <div className="w-1/2 font-bold text-gray-700">Name</div>
+            <div className="w-1/2 text-gray-600">{serviceState?.applicantInformation?.fullNameEn}</div>
+        </div>
+        <div className="w-full sm:w-2/2 md:w-3/3 lg:w-2/4 p-4 border-b border-gray-200 flex">
+            <div className="w-1/2 font-bold text-gray-700">Gender</div>
+            <div className="w-1/2 text-gray-600">{serviceState?.applicantInformation?.genderId == 1 ? 'Male' : 'Female'}</div>
+        </div>
+        <div className="w-full sm:w-2/2 md:w-3/3 lg:w-2/4 p-4 border-b border-gray-200 flex">
+            <div className="w-1/2 font-bold text-gray-700">Mobile Number</div>
+            <div className="w-1/2 text-gray-600">{serviceState?.applicantInformation?.address.mobileNumber}</div>
+        </div>
+        <div className="w-full sm:w-1/2 md:w-3/3 lg:w-2/4 p-4 border-b border-gray-200 flex">
+            <div className="w-1/2  font-bold text-gray-700">Email</div>
+            <div className="w-1/2 text-gray-600">{serviceState?.applicantInformation?.address.email}</div>
+        </div>
+        <div className="w-full sm:w-2/2 md:w-3/3 lg:w-2/4 p-4 border-b border-gray-200 flex">
+            <div className="w-1/2 font-bold text-gray-700">Nationality</div>
+            <div className="w-1/2 text-gray-600">{serviceState?.applicantInformation?.nationality.titleEn}</div>
+        </div>
+        <div className="w-full sm:w-2/2 md:w-3/3 lg:w-2/4 p-4 flex">
+            <div className="w-1/2 font-bold text-gray-700">User Type</div>
+            <div className="w-1/2 text-gray-600">{/* Add content for User Type here */}</div>
+        </div>
+    </div>
+</div>
+
+
+            <hr className="mt-10" />
+            <div className="mt-10">
+                <h1 className="text-xl mb-5">Service Details</h1>
+                <div className="bg-white border border-gray-200 rounded-lg">
+                    <div className="flex flex-wrap">
+                        {Object.entries(studyDetails)
+                            .filter(([_, value]) => value !== undefined && value !== null && value.toString().trim() !== '')
+                            .map(([key, value], index) => (
+                                <div className="w-full sm:w-2/2 md:w-3/3 lg:w-2/4 p-4 border-b border-gray-200 flex" key={index}>
+                                    <div className="w-1/2 font-bold text-gray-700">{key}</div>
+                                    <div className="w-1/2 text-gray-600">{lookupField(key, value)}</div>
+                                </div>
+                            ))}
+                    </div>
+                </div>
+            </div>
+
+            <hr className="mt-10" />
+            <div className="mt-10">
+                <h1 className="text-xl mb-5">Attachments</h1>
+            </div>
+
+
+
+
             <div className="w-full actions mt-10 flex flex-row justify-between flex-wrap">
                 <button className="aegov-btn btn-lg" type="button" onClick={goPrevious}>
 
@@ -112,7 +166,8 @@ const Summary: React.FC = () => {
 
             </div>
 
-        </div>
+        </section>
+
 
 
     )

@@ -1,5 +1,6 @@
 
 
+import React from "react";
 import { UserProfile } from "./user.modal";
 
 export interface Service {
@@ -12,7 +13,8 @@ export interface Service {
   currentStepIndex: number;
   steps: ServiceStep[];
   form: {},
-  attachments: AttachmentList[]
+  attachments: AttachmentList[],
+  summary?:React.FC
 
 
 }
