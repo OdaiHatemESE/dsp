@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/header";
 
 import StoreProvider from "./StoreProvider";
+import Breadcrumbs from "@/components/breadcrumb";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,7 +27,7 @@ export default async function RootLayout({
       <body className={inter.className}>
         <StoreProvider>
           <Header></Header>
-
+          
           {children}
         </StoreProvider>
       </body>
