@@ -14,7 +14,7 @@ export interface Service {
   steps: ServiceStep[];
   form: {},
   attachments: AttachmentList[],
-  summary?:React.FC
+  summary?: React.FC
 
 
 }
@@ -47,10 +47,16 @@ export interface ServiceForm {
   applicantInformation?: UserProfile;
   form?: any;
   attachment?: AttachmentList[];
+  applicationId?:any;
 }
 
 
 // studyDetails // issuance-and-attestation
+
+
+
+
+
 
 export interface StudyDetails {
   requestTypeId: number;
@@ -72,8 +78,16 @@ export interface StudyDetails {
   destinationCountryNameAr: string;
   destinationCountryName: string;
   shippingAddress: Address;
+  application: any;
+  applicant: UserProfile;
+  applicationHistory: any;
+  paymentDetails: any
+
 
 }
+
+
+
 
 export interface Address {
   id: number;
@@ -102,32 +116,33 @@ export interface Address {
 
 
 export interface StudyDetailsForm {
-  ApplicationId?: number; // integer($int64)
-  ApplicantId?: number; // integer($int32)
-  RequestForId?: number; // integer($int32)
-  RelationshipId?: string; // integer($int32) - optional if not always present
-  EmirateId?: string; // integer($int32)
-  EmirateSchoolId?: string; // integer($int32)
-  RegionId?: number; // integer($int32)
-  RequestTypeId?: number; // integer($int32)
-  NumberOfCopies?: number; // integer($int32)
-  GradeId?: string; // integer($int32)
-  AcademicYearId?: number; // integer($int32)
-  SourceChannel?: number; // integer($int32) - optional if not always present
-  EmiratesIDNumber?: string;
-  StreetNumber?: string;
-  HouseNumber?: string;
-  SchoolName?: string;
-  Comment?: string;
-  SISNumber?: string;
-  IsLastStep?: boolean; // optional if not always present
-  IsMofaicAttested?: boolean; // optional if not always present
-  DestinationCountryId?: number; // integer($int32) - optional if not always present
-  PayButton?: boolean;
+  applicationId?: number; // integer($int64)
+  applicantId?: number; // integer($int32)
+  requestForId?: number; // integer($int32)
+  relationshipId?: string; // integer($int32) - optional if not always present
+  emirateId?: string; // integer($int32)
+  emirateSchoolId?: string; // integer($int32)
+  regionId?: number; // integer($int32)
+  requestTypeId?: number; // integer($int32)
+  numberOfCopies?: number; // integer($int32)
+  gradeId?: string; // integer($int32)
+  academicYearId?: number; // integer($int32)
+  sourceChannel?: number; // integer($int32) - optional if not always present
+  emiratesIdNumber?: string;
+  streetNumber?: string;
+  houseNumber?: string;
+  schoolName?: string;
+  comment?: string;
+  sisNumber?: string;
+  isLastStep?: boolean; // optional if not always present
+  isMofaicAttested?: boolean; // optional if not always present
+  destinationCountryId?: number; // integer($int32) - optional if not always present
+  payButton?: boolean;
   consent?: boolean; // optional new field
-  sisstudentcontrol?: object; // optional new field, replace with the correct type if known
+  sisStudentControl?: object; // optional new field, replace with the correct type if known
   haveEmiratesId?: boolean; // optional new field
-  PreviousAttachments?: any; // optional new field, replace with the correct type if known
+  previousAttachments?: any; // optional new field, replace with the correct type if known
+
 }
 
 

@@ -19,16 +19,16 @@ import fetchWithAuth from '@/services/fetchWithAuth';
 import { UserProfile } from '@/config/user.modal';
 
 const validationSchema = Yup.object().shape({
-    RequestTypeId: Yup.string(),
-    NumberOfCopies: Yup.string(),
-    EmirateSchoolId: Yup.string().required('Emirate is required'),
-    AcademicYearId: Yup.string().required('Academic year is required'),
-    GradeId: Yup.string().required('School grade is required'),
-    SchoolName: Yup.string().required('School name is required'),
-    SISNumber: Yup.string(),
-    Comment: Yup.string(),
-    IsMofaicAttested: Yup.bool(),
-    DestinationCountryId: Yup.string().test(
+    requestTypeId: Yup.string(),
+    numberOfCopies: Yup.string(),
+    emirateId: Yup.string().required('Emirate is required'),
+    academicYearId: Yup.string().required('Academic year is required'),
+    gradeId: Yup.string().required('School grade is required'),
+    schoolName: Yup.string().required('School name is required'),
+    sisNumber: Yup.string(),
+    comment: Yup.string(),
+    isMofaicAttested: Yup.bool(),
+    destinationCountryId: Yup.string().test(
         'is-required-if-mofaic-attested',
         'Destination country is required when MOFAIC attestation is selected',
         function (value) {
@@ -52,14 +52,14 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
     const router = useRouter();
 
 
-
-
-
     const serviceState = useAppSelector((state) => state.service.service); // Get Service State  
+    console.log(serviceState?.form);
     const emirateId = serviceState?.applicantInformation?.emiratesId
     const applicantId = serviceState?.applicantInformation?.id;
+    alert(applicantId)
     let updatedService = { ...serviceState, form: serviceState?.form ?? {} as StudyDetailsForm }
 
+    
     const dispath = useAppDispatch();
     const [count, setCount] = useState<number>();
 
@@ -74,34 +74,31 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
     const schoolGrades = lookups?.Grade;
     const academicYearList = lookups?.AcademicYear;
     const moficCountriesList = lookups?.NationalityMofaic;
-
-
-    console.log('RENDER -- - - - - - - - - - -- ')
-    console.log(updatedService.form)
-
+   
+ 
     const [formData, setFormData] = useState<StudyDetailsForm>({
-        RequestTypeId: updatedService.form.RequestTypeId ?? 1,
-        NumberOfCopies: count,
-        EmirateSchoolId: updatedService.form.EmirateSchoolId,
-        AcademicYearId: updatedService.form.AcademicYearId,
-        GradeId: updatedService.form.GradeId,
-        SchoolName: updatedService.form.SchoolName,
-        SISNumber: updatedService.form.SISNumber,
-        Comment: updatedService.form.Comment,
-        IsMofaicAttested: updatedService.form.IsMofaicAttested ?? false,
-        DestinationCountryId: updatedService.form.DestinationCountryId,
-        SourceChannel: updatedService.form.SourceChannel,
-        HouseNumber: updatedService.form.HouseNumber,
-        ApplicationId: updatedService.form.ApplicationId,
-        StreetNumber: updatedService.form.StreetNumber,
-        IsLastStep: updatedService.form.IsLastStep,
-        RegionId: updatedService.form.RegionId,
-        RelationshipId: updatedService.form.RelationshipId,
-        RequestForId: updatedService.requestForId,
-        EmiratesIDNumber: updatedService.form.EmiratesIDNumber,
-        PayButton: updatedService.form.PayButton ?? false,
-        EmirateId: updatedService.form.EmirateId,
-        ApplicantId: updatedService.form.ApplicantId ?? applicantId,
+        
+        requestTypeId: updatedService.form.requestTypeId ?? 1,
+        numberOfCopies: updatedService.form.numberOfCopies  ,
+        emirateId: updatedService.form.emirateId,
+        academicYearId: updatedService.form.academicYearId,
+        gradeId: updatedService.form.gradeId,
+        schoolName: updatedService.form.schoolName,
+        sisNumber: updatedService.form.sisNumber,
+        comment: updatedService.form.comment,
+        isMofaicAttested: updatedService.form.isMofaicAttested ?? false,
+        destinationCountryId: updatedService.form.destinationCountryId,
+        sourceChannel: updatedService.form.sourceChannel,
+        houseNumber: updatedService.form.houseNumber,
+        applicationId: updatedService.applicationId,
+        streetNumber: updatedService.form.streetNumber,
+        isLastStep: updatedService.form.isLastStep,
+        regionId: updatedService.form.regionId,
+        relationshipId: updatedService.form.relationshipId,
+        requestForId: updatedService.requestForId,
+        emiratesIdNumber: updatedService.form.emiratesIdNumber,
+        payButton: updatedService.form.payButton ?? false,
+        applicantId: updatedService.form.applicantId ?? applicantId,
     });
 
 
@@ -109,21 +106,21 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
     useEffect(() => {
         if (studentInfo && lookups) {
             // Handle student information if necessary
-            console.log('effect')
+           
             if (studentInfo.studentNumber) {
                 let updatedFormData: StudyDetailsForm = {
                     ...formData,
-                    SISNumber: formData.SISNumber ?? studentInfo.studentNumber,
-                    EmirateSchoolId: formData.EmirateSchoolId ?? studentInfo.emirateId,
-                    SchoolName: formData.SchoolName ?? studentInfo.schoolNameEn,
-                    GradeId: formData.GradeId ?? studentInfo.gradeId
+                    sisNumber: formData.sisNumber ?? studentInfo.studentNumber,
+                    emirateId: formData.emirateId ?? studentInfo.emirateId,
+                    schoolName: formData.schoolName ?? studentInfo.schoolNameEn,
+                    gradeId: formData.gradeId ?? studentInfo.gradeId
                 };
 
 
-                setValue('SISNumber', updatedFormData.SISNumber);
-                setValue('EmirateSchoolId', updatedFormData.EmirateSchoolId);
-                setValue('SchoolName', updatedFormData.SchoolName);
-                setValue('GradeId', updatedFormData.GradeId);
+                setValue('sisNumber', updatedFormData.sisNumber);
+                setValue('emirateId', updatedFormData.emirateId);
+                setValue('schoolName', updatedFormData.schoolName);
+                setValue('gradeId', updatedFormData.gradeId);
 
                 // Dispatch the updated service to the store
                 const updatedService = { ...serviceState, form: updatedFormData } as ServiceForm;
@@ -202,18 +199,21 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
     const savaAsDraft = async () => {
         // Capture the latest form values
         const data = getValues();
-        console.log('odai', data);
+       
         // Update the formData state with the latest form values before saving
         const updatedService = { ...serviceState, form: data } as ServiceForm;
         dispath(setService(updatedService));
 
         const form = new FormData();
-
+       /// form.append('applicationId', data.applicationId || '');
         // Append key-value pairs to the FormData object
         Object.keys(data).forEach((key) => {
             form.append(key, data[key]?.toString() || '');
+            
         });
+        console.log(data);
 
+     
         try {
             const response = await fetchWithAuth('certificates/v1/SaveAsDraft', {
                 method: 'POST',
@@ -266,8 +266,8 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                             type="radio"
                             value={1}
                             onClick={handleClick}
-                            checked={formData.RequestTypeId == 1}
-                            {...register('RequestTypeId')} />
+                            checked={formData.requestTypeId == 1}
+                            {...register('requestTypeId')} />
                         <div>
                             <label htmlFor="softCopy">Soft Copy</label>
                             <p id="softCopy-description" className="text-sm text-gray-500 mt-1">
@@ -285,48 +285,48 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                             type="radio"
                             value={2}
                             onClick={handleClick}
-                            checked={formData.RequestTypeId == 2}
-                            {...register('RequestTypeId')} />
+                            checked={formData.requestTypeId == 2}
+                            {...register('requestTypeId')} />
                         <div>
                             <label htmlFor="hardCopy">Hard Copy</label>
                             <p id="hardCopy-description" className="text-sm text-gray-500 mt-1">
                                 (You will receive the document as a hard copy and it will have additional charge 15 AED delivery)
                             </p>
-                            {formData.RequestTypeId == 2 && <Counter onCountChange={handleCount} />}
+                            {formData.requestTypeId == 2 && <Counter onCountChange={handleCount} />}
                         </div>
                     </div>
                 </div>
             </div>
-            {errors.RequestForId && <span className='error-message'>{errors.RequestForId.message}</span>}
+            {errors.requestTypeId && <span className='error-message'>{errors.requestTypeId.message}</span>}
             <hr className="mb-5 mt-5" />
 
             <h5>Study Details</h5>
             <p className="text-sm text-gray-500 mt-1">User Study Details</p>
             <div className="w-full mb-5">
-                <div className={classNames({ "control-error": errors.EmirateSchoolId }, 'aegov-form-control')} >
+                <div className={classNames({ "control-error": errors.emirateId }, 'aegov-form-control')} >
                     <label htmlFor="Emirate">Emirate</label>
                     <div className="form-control-input">
-                        <select id="Emirate" {...register('EmirateSchoolId')} >
+                        <select id="Emirate" {...register('emirateId')} >
                             <option value={''}>Please Select</option>
                             {emirates?.map((emr) => {
                                 return <option key={emr.id} value={emr.id} >{emr.titleEn}</option>
                             })}
                         </select>
                     </div>
-                    {errors.EmirateSchoolId && <span className='error-message'>{errors.EmirateSchoolId.message}</span>}
+                    {errors.emirateId && <span className='error-message'>{errors.emirateId.message}</span>}
                 </div>
             </div>
 
             <div className="w-full mb-5">
-                <div className={classNames({ "control-error": errors.AcademicYearId }, 'aegov-form-control')}>
+                <div className={classNames({ "control-error": errors.academicYearId }, 'aegov-form-control')}>
                     <label htmlFor="academicYear">Academic year</label>
                     <div className="form-control-input">
-                        <select id="academicYear" {...register('AcademicYearId',
+                        <select id="academicYear" {...register('academicYearId',
                             {
                                 onChange(event) {
                                     const selectedValue = event.target.value;
                                     setFormData((prev)=>{
-                                        return {...prev, AcademicYearId:selectedValue, AcademicYearName:selectedValue}
+                                        return {...prev, academicYearId:selectedValue, AcademicYearName:selectedValue}
                                     })
                                     if(selectedValue>96){
                                         setshowMofic(true)
@@ -343,15 +343,15 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                         </select>
 
                     </div>
-                    {errors.AcademicYearId && <span className='error-message'>{errors.AcademicYearId.message}</span>}
+                    {errors.academicYearId && <span className='error-message'>{errors.academicYearId.message}</span>}
                 </div>
             </div>
 
             <div className="w-full mb-5">
-                <div className={classNames({ "control-error": errors.GradeId }, 'aegov-form-control')} >
+                <div className={classNames({ "control-error": errors.gradeId }, 'aegov-form-control')} >
                     <label htmlFor="schoolGrade">School Grade</label>
                     <div className="form-control-input">
-                        <select id="schoolGrade" {...register('GradeId')}  >
+                        <select id="schoolGrade" {...register('gradeId')}  >
                             <option value={''}>Please Select</option>
                             {schoolGrades?.map((grade) => {
                                 return <option key={grade.id} value={grade.id}>{grade.titleEn}</option>
@@ -359,17 +359,17 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                             })}
                         </select>
                     </div>
-                    {errors.GradeId && <span className='error-message'>{errors.GradeId.message}</span>}
+                    {errors.gradeId && <span className='error-message'>{errors.gradeId.message}</span>}
                 </div>
             </div>
 
             <div className="w-full mb-5">
-                <div className={classNames({ "control-error": errors.SchoolName }, 'aegov-form-control')}>
+                <div className={classNames({ "control-error": errors.schoolName }, 'aegov-form-control')}>
                     <label htmlFor="schoolName">School Name</label>
                     <div className="form-control-input">
-                        <input type="text" id="schoolName" {...register('SchoolName')} />
+                        <input type="text" id="schoolName" {...register('schoolName')} />
                     </div>
-                    {errors.SchoolName && <span className='error-message'>{errors.SchoolName.message}</span>}
+                    {errors.schoolName && <span className='error-message'>{errors.schoolName.message}</span>}
                 </div>
             </div>
 
@@ -379,7 +379,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                         Student Number <small className="text-gray-400">(Optional)</small>
                     </label>
                     <div className="form-control-input">
-                        <input type="text" id="studentNumber" {...register('SISNumber')} />
+                        <input type="text" id="studentNumber" {...register('sisNumber')} />
                     </div>
                 </div>
             </div>
@@ -392,10 +392,10 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                     <div className="form-control-input">
                         <textarea
                             id="comments"
-                            {...register('Comment')}
+                            {...register('comment')}
                             cols={10}
                             rows={10}
-                            value={formData.Comment}
+                            value={formData.comment}
 
                             placeholder="Example: I am submitting the application for a student who does not have an ID. I need a printed paper copy for use outside the country."
                         ></textarea>
@@ -403,7 +403,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                 </div>
             </div>
                        
-            {formData.RequestTypeId == 1 && showMofic && (
+            {formData.requestTypeId == 1 && showMofic && (
                 <>
                     <hr className="mb-5 mt-5" />
                     <h5>Attest the academic certificate from MOFAIC</h5>
@@ -417,8 +417,8 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                                     type="radio"
                                     value={true}
                                     onClick={handleClick}
-                                    checked={formData.IsMofaicAttested === true}
-                                    {...register('IsMofaicAttested')}
+                                    checked={formData.isMofaicAttested === true}
+                                    {...register('isMofaicAttested')}
                                 />
                                 <div>
                                     <label htmlFor="yesMOFAIC">Yes</label>
@@ -436,8 +436,8 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                                     type="radio"
                                     onClick={handleClick}
                                     value={false}
-                                    checked={formData.IsMofaicAttested === false}
-                                    {...register('IsMofaicAttested')}
+                                    checked={formData.isMofaicAttested === false}
+                                    {...register('isMofaicAttested')}
                                 />
                                 <div>
                                     <label htmlFor="noMOFAIC">No</label>
@@ -448,23 +448,23 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                             </div>
                         </div>
                     </div>
-                    {formData.IsMofaicAttested && (
+                    {formData.isMofaicAttested && (
                         <div className="w-full mb-5">
-                            <div className={classNames({ "control-error": errors.DestinationCountryId }, 'aegov-form-control')} >
+                            <div className={classNames({ "control-error": errors.destinationCountryId }, 'aegov-form-control')} >
                                 <label htmlFor="schoolGrade">Select country to attest for</label>
                                 <div className="form-control-input">
-                                    <select id="schoolGrade" {...register('DestinationCountryId')}  >
+                                    <select id="schoolGrade" {...register('destinationCountryId')}  >
                                         <option value={''}>Please Select</option>
                                         {moficCountriesList?.map((country) => (
                                             <option key={country.id} value={country.id}>{country.countryName}</option>
                                         ))}
                                     </select>
                                 </div>
-                                {errors.DestinationCountryId && <span className='error-message'>{errors.DestinationCountryId.message}</span>}
+                                {errors.destinationCountryId && <span className='error-message'>{errors.destinationCountryId.message}</span>}
                             </div>
                         </div>
                     )}
-                    {errors.IsMofaicAttested && <span>{errors.IsMofaicAttested.message}</span>}
+                    {errors.isMofaicAttested && <span>{errors.isMofaicAttested.message}</span>}
                 </>
             )}
 

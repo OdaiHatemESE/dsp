@@ -84,6 +84,7 @@ export interface UserProfile {
     id: number;
     titleAr: string;
     titleEn: string;
+    code: string | null;
   }
   
   export interface User {

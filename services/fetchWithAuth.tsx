@@ -10,7 +10,7 @@ const fetchWithAuth = async (url: string, options: RequestInit = {}): Promise<Re
     ...options.headers,
     'Authorization': `Bearer ${TOKEN}`,
   };
-  console.clear();
+ 
   
  
 

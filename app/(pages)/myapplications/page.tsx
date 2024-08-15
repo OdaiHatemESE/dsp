@@ -1,8 +1,9 @@
 import { Application } from '@/config/application.modal';
 import { cookies } from 'next/headers'; // Importing the cookies function
-
+import ESEDataTable from '@/components/dataTable';
+import Spinner from '@/components/spinner';
 const MyApplicationsPage = async () => {
-    let data : Application[] = [];
+    let data: Application[] = [];
     let totalNumber = 0;
     let error = null;
     try {
@@ -24,10 +25,10 @@ const MyApplicationsPage = async () => {
             throw new Error(`Failed to fetch data: ${res.status}`);
         }
 
-       const respons  = await res.json();
-       totalNumber=respons.totalNumber;
-       data= respons.data;
-    } catch (err: any) { 
+        const respons = await res.json();
+        totalNumber = respons.totalNumber;
+        data = respons.data;
+    } catch (err: any) {
         error = err.message;
     }
 
@@ -35,10 +36,15 @@ const MyApplicationsPage = async () => {
         return <div>Error: {error}</div>;
     }
 
+    if (!data.length) {
+        return <Spinner />; // Show loading component if data is empty
+    }
+
     return (
-        <div>{data.map((app)=>{
-            return <div key={app.id}>{app.serviceName}</div>;
-           })}</div>
+        <div>
+            <h1 className='mb-10 text-xl'>My Applications</h1>
+            <ESEDataTable data={data} pageSize={10} pageId="myApplications" />
+        </div>
     );
 }
 
