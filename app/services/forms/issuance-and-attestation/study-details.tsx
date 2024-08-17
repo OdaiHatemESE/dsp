@@ -17,11 +17,12 @@ import { getStudentInfo } from '@/services/getStudentInfo';
 import Spinner from '@/components/spinner';
 import fetchWithAuth from '@/services/fetchWithAuth';
 import { UserProfile } from '@/config/user.modal';
+import { savaAsDraft } from '@/services/savaAsDraft';
 
 const validationSchema = Yup.object().shape({
     requestTypeId: Yup.string(),
     numberOfCopies: Yup.string(),
-    emirateId: Yup.string().required('Emirate is required'),
+    emirateSchoolId: Yup.string().required('Emirate is required'),
     academicYearId: Yup.string().required('Academic year is required'),
     gradeId: Yup.string().required('School grade is required'),
     schoolName: Yup.string().required('School name is required'),
@@ -48,20 +49,21 @@ interface params {
 }
 
 const StudyDetails: React.FC<params> = ({ serviceId }) => {
+    console.log('toz')
     const { nextStep, prevStep } = useStepper();
     const router = useRouter();
-
-
+ 
     const serviceState = useAppSelector((state) => state.service.service); // Get Service State  
-    console.log(serviceState?.form);
+
     const emirateId = serviceState?.applicantInformation?.emiratesId
     const applicantId = serviceState?.applicantInformation?.id;
-    alert(applicantId)
+
     let updatedService = { ...serviceState, form: serviceState?.form ?? {} as StudyDetailsForm }
 
-    
+
     const dispath = useAppDispatch();
-    const [count, setCount] = useState<number>();
+
+    const [count, setCount] = useState<number>(updatedService.form.numberOfCopies ?? 0);
 
 
 
@@ -74,13 +76,14 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
     const schoolGrades = lookups?.Grade;
     const academicYearList = lookups?.AcademicYear;
     const moficCountriesList = lookups?.NationalityMofaic;
-   
- 
+
+
     const [formData, setFormData] = useState<StudyDetailsForm>({
-        
         requestTypeId: updatedService.form.requestTypeId ?? 1,
-        numberOfCopies: updatedService.form.numberOfCopies  ,
-        emirateId: updatedService.form.emirateId,
+
+        numberOfCopies: updatedService.form.numberOfCopies,
+        emirateId: updatedService.form.emirateSchoolId,
+        emirateSchoolId: updatedService.form.emirateSchoolId ?? updatedService.form.emirateId,
         academicYearId: updatedService.form.academicYearId,
         gradeId: updatedService.form.gradeId,
         schoolName: updatedService.form.schoolName,
@@ -102,23 +105,27 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
     });
 
 
-
     useEffect(() => {
+
+        formData.numberOfCopies = count;
         if (studentInfo && lookups) {
+
+            console.log('have data student');
             // Handle student information if necessary
-           
+
             if (studentInfo.studentNumber) {
                 let updatedFormData: StudyDetailsForm = {
                     ...formData,
                     sisNumber: formData.sisNumber ?? studentInfo.studentNumber,
-                    emirateId: formData.emirateId ?? studentInfo.emirateId,
+                    emirateSchoolId: formData.emirateSchoolId ?? formData.emirateId ?? studentInfo.emirateId,
                     schoolName: formData.schoolName ?? studentInfo.schoolNameEn,
                     gradeId: formData.gradeId ?? studentInfo.gradeId
                 };
 
+                setCount(updatedFormData.numberOfCopies ?? 10)
 
                 setValue('sisNumber', updatedFormData.sisNumber);
-                setValue('emirateId', updatedFormData.emirateId);
+                setValue('emirateSchoolId', updatedFormData.emirateSchoolId);
                 setValue('schoolName', updatedFormData.schoolName);
                 setValue('gradeId', updatedFormData.gradeId);
 
@@ -127,15 +134,15 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                 dispath(setService(updatedService));
             }
         }
-    }, [studentInfo, lookups]);
+    }, [studentInfo, lookups, count]);
 
 
-     
+
 
 
 
     const [IsMofaicAttested, setIsMofaicAttested] = useState<boolean>(false);
-    const [showMofic,setshowMofic]=useState<boolean>(true);
+    const [showMofic, setshowMofic] = useState<boolean>(true);
     const { register, handleSubmit, getValues, formState: { errors }, setValue } = useForm({
         resolver: yupResolver(validationSchema),
         defaultValues: formData
@@ -152,86 +159,19 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
     const handleCount = (count: number) => {
 
         setCount(count)
-    }
-
-    const handleClick = (event: any) => {
-
-        const id = event.target.id;
-
-        switch (id) {
-            case 'yesMOFAIC':
-
-                setFormData((prev) => ({
-                    ...prev,
-                    IsMofaicAttested: true
-                }));
-                setIsMofaicAttested(true)
-                break;
-            case 'noMOFAIC':
-
-                setFormData((prev) => ({
-                    ...prev,
-                    IsMofaicAttested: false
-                }));
-                setIsMofaicAttested(false)
-                break;
-            case 'softCopy':
-
-                setFormData((prev) => ({
-                    ...prev,
-                    RequestTypeId: 1
-                }));
-                break;
-            case 'hardCopy':
-
-                setFormData((prev) => ({
-                    ...prev,
-                    RequestTypeId: 2
-                }));
-                break;
-            default:
-                break;
-        }
-
 
     }
 
-    const savaAsDraft = async () => {
+
+
+    const save = async () => {
         // Capture the latest form values
-        const data = getValues();
-       
+        let data = getValues();
         // Update the formData state with the latest form values before saving
+        data = { ...data, numberOfCopies: count };
         const updatedService = { ...serviceState, form: data } as ServiceForm;
         dispath(setService(updatedService));
-
-        const form = new FormData();
-       /// form.append('applicationId', data.applicationId || '');
-        // Append key-value pairs to the FormData object
-        Object.keys(data).forEach((key) => {
-            form.append(key, data[key]?.toString() || '');
-            
-        });
-        console.log(data);
-
-     
-        try {
-            const response = await fetchWithAuth('certificates/v1/SaveAsDraft', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                },
-                body: form,
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to post data');
-            }
-
-            const result = await response.json();
-            console.log('Data posted successfully:', result);
-        } catch (error) {
-            console.error('Error saving draft:', error);
-        }
+        savaAsDraft(updatedService);
     };
 
     const onSubmit = (data: any, event: any) => {
@@ -246,6 +186,14 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
             prevStep();
         }
 
+    };
+
+    const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value === 'true' ? true : value === 'false' ? false : value,
+        }));
     };
 
 
@@ -264,10 +212,10 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                             id="softCopy"
                             aria-describedby="softCopy-description"
                             type="radio"
-                            value={1}
-                            onClick={handleClick}
-                            checked={formData.requestTypeId == 1}
-                            {...register('requestTypeId')} />
+                            value="1"
+                            checked={formData.requestTypeId?.toString() === "1"}
+                            {...register('requestTypeId')}
+                            onChange={handleRadioChange} />
                         <div>
                             <label htmlFor="softCopy">Soft Copy</label>
                             <p id="softCopy-description" className="text-sm text-gray-500 mt-1">
@@ -283,16 +231,17 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                             id="hardCopy"
                             aria-describedby="hardCopy-description"
                             type="radio"
-                            value={2}
-                            onClick={handleClick}
-                            checked={formData.requestTypeId == 2}
-                            {...register('requestTypeId')} />
+                            value="2"
+                            checked={formData.requestTypeId?.toString() === "2"}
+                            {...register('requestTypeId')}
+                            onChange={handleRadioChange}
+                        />
                         <div>
                             <label htmlFor="hardCopy">Hard Copy</label>
                             <p id="hardCopy-description" className="text-sm text-gray-500 mt-1">
                                 (You will receive the document as a hard copy and it will have additional charge 15 AED delivery)
                             </p>
-                            {formData.requestTypeId == 2 && <Counter onCountChange={handleCount} />}
+                            {formData.requestTypeId == 2 && <Counter odai={count} onCountChange={handleCount} />}
                         </div>
                     </div>
                 </div>
@@ -303,17 +252,17 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
             <h5>Study Details</h5>
             <p className="text-sm text-gray-500 mt-1">User Study Details</p>
             <div className="w-full mb-5">
-                <div className={classNames({ "control-error": errors.emirateId }, 'aegov-form-control')} >
+                <div className={classNames({ "control-error": errors.emirateSchoolId }, 'aegov-form-control')} >
                     <label htmlFor="Emirate">Emirate</label>
                     <div className="form-control-input">
-                        <select id="Emirate" {...register('emirateId')} >
+                        <select id="Emirate" {...register('emirateSchoolId')} >
                             <option value={''}>Please Select</option>
                             {emirates?.map((emr) => {
                                 return <option key={emr.id} value={emr.id} >{emr.titleEn}</option>
                             })}
                         </select>
                     </div>
-                    {errors.emirateId && <span className='error-message'>{errors.emirateId.message}</span>}
+                    {errors.emirateSchoolId && <span className='error-message'>{errors.emirateSchoolId.message}</span>}
                 </div>
             </div>
 
@@ -324,13 +273,14 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                         <select id="academicYear" {...register('academicYearId',
                             {
                                 onChange(event) {
+                                    console.log('odai');
                                     const selectedValue = event.target.value;
-                                    setFormData((prev)=>{
-                                        return {...prev, academicYearId:selectedValue, AcademicYearName:selectedValue}
+                                    setFormData((prev) => {
+                                        return { ...prev, academicYearId: selectedValue, AcademicYearName: selectedValue }
                                     })
-                                    if(selectedValue>96){
+                                    if (selectedValue > 96) {
                                         setshowMofic(true)
-                                    }else{
+                                    } else {
                                         setshowMofic(false);
                                     }
                                 },
@@ -402,7 +352,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                     </div>
                 </div>
             </div>
-                       
+
             {formData.requestTypeId == 1 && showMofic && (
                 <>
                     <hr className="mb-5 mt-5" />
@@ -415,10 +365,12 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                                     id="yesMOFAIC"
                                     aria-describedby="yesMOFAIC-description"
                                     type="radio"
-                                    value={true}
-                                    onClick={handleClick}
-                                    checked={formData.isMofaicAttested === true}
                                     {...register('isMofaicAttested')}
+                                    value="true"
+                                    checked={formData.isMofaicAttested === true}
+                                    onChange={handleRadioChange}
+
+
                                 />
                                 <div>
                                     <label htmlFor="yesMOFAIC">Yes</label>
@@ -434,10 +386,11 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                                     id="noMOFAIC"
                                     aria-describedby="noMOFAIC-description"
                                     type="radio"
-                                    onClick={handleClick}
-                                    value={false}
+
+                                    {...register('isMofaicAttested', { value: false })}
+                                    value="false"
                                     checked={formData.isMofaicAttested === false}
-                                    {...register('isMofaicAttested')}
+                                    onChange={handleRadioChange}
                                 />
                                 <div>
                                     <label htmlFor="noMOFAIC">No</label>
@@ -501,7 +454,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                     Previous
                 </button>
                 <div>
-                    <button className="aegov-btn btn-lg" type="button" name="saveAsDraft" onClick={savaAsDraft}>
+                    <button className="aegov-btn btn-lg" type="button" name="saveAsDraft" onClick={save}>
                         Sava as draft
 
                     </button>

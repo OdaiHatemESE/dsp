@@ -13,6 +13,8 @@ import { stat } from "fs";
 import { useRouter } from "next/navigation";
 import setServiceState from "@/services/setServiceState";
 import { useStepper } from "../steper/stepperProvider";
+import fetchWithAuth from "@/services/fetchWithAuth";
+import { addSubProfile } from "@/services/userprofile";
 
 interface params {
   serviceId: string
@@ -27,7 +29,11 @@ const ApplicantInformation: React.FC<params> = ({ serviceId }) => {
   const dispatch = useAppDispatch();
   let serviceState = useAppSelector((state) => state.service.service);
   const otherApplicant = useAppSelector((state) => state.applicant.applicant);
-  
+
+  useEffect(() => {
+    setWhoApply(serviceState?.requestForId ?? 1)
+  })
+
 
 
   const handleValueChange = (value: any) => {
@@ -37,8 +43,8 @@ const ApplicantInformation: React.FC<params> = ({ serviceId }) => {
   };
 
 
-  const goNext = () => {
-    nextStep()
+  const goNext = async () => {
+    nextStep();
   }
 
 
@@ -46,10 +52,10 @@ const ApplicantInformation: React.FC<params> = ({ serviceId }) => {
 
   return (
     <div className="ApplicantInformation">
- 
+
       <WhoApply requestForId={handleValueChange} />
       <ApplicantDetails requestForId={Number(whoApply)} />
-      {whoApply == 2 && otherApplicant==null && <GetUserInfoByEID />}
+      {whoApply == 2 && otherApplicant == null && <GetUserInfoByEID />}
 
 
 

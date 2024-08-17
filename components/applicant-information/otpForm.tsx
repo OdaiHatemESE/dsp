@@ -1,5 +1,6 @@
 import { UserProfile } from '@/config/user.modal';
 import fetchWithAuth from '@/services/fetchWithAuth';
+import { addSubProfile } from '@/services/userprofile';
 import { verfiyMobile } from '@/services/verfiyEid';
 import { useAppDispatch } from '@/store/lib/hooks';
 import { setApplicant } from '@/store/slices/applicantSlice';
@@ -73,11 +74,8 @@ const OTPForm: React.FC<params> = ({ eid, mobileNumber, user }) => {
             }
 
             const data = await response.json();
-
-            dispatch(setApplicant(user ?? {} as UserProfile))
-
-            // Handle successful response
-
+            const subUser = await addSubProfile({ applicant: user ?? {} as any });
+            dispatch(setApplicant(subUser.response ?? {} as UserProfile))
 
         } catch (error) {
             

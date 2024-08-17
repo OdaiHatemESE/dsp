@@ -15,7 +15,7 @@ const serviceSlice = createSlice({
   reducers: {
     setService(state, action: PayloadAction<ServiceForm>) {
        
-    
+      console.log('oodoaosdo')
       state.service = action.payload;
     },
      

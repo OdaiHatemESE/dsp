@@ -16,12 +16,6 @@ const GetUserInfoByEID: React.FC = () => {
     const [digits, setDigits] = useState('');
     const [user,setUser]=useState<UserProfile>();
 
-
-
-
-
-
-
     const handleChange = (event: any) => {
         setemirateId(event.target.value);
     };
@@ -33,12 +27,6 @@ const GetUserInfoByEID: React.FC = () => {
             setEmirateIdStatus(true);
             setMobileNumber(data.response.maskedMobile);
         }
-        
-        
-
-
-
-
     }
 
     const handleMobileSubmit = async (e: FormEvent) => {

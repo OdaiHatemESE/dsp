@@ -1,7 +1,7 @@
 'use client'
 
 import { useAppSelector } from '@/store/lib/hooks';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface requestForId {
     requestForId: (id: number) => void;
@@ -9,8 +9,13 @@ interface requestForId {
 
 const whoApply: React.FC<requestForId> = ({ requestForId }) => {
     const serviceState = useAppSelector((state) => state.service.service);
-    const [id, setId] = useState<number>(serviceState?.requestForId ?? 1);
+   
+    const [id, setId] = useState<number>(1);
+    useEffect(() => {
+        setId(serviceState?.requestForId || 1)
+    }, [requestForId])
     const handleChange = (event: any) => {
+
         requestForId(Number(event.target.value));
         setId(Number(event.target.value))
     }
@@ -29,7 +34,7 @@ const whoApply: React.FC<requestForId> = ({ requestForId }) => {
                             name="who"
                             type="radio"
                             value={1}
-                            checked={id === 1}
+                            checked={id == 1}
                             onChange={handleChange}
 
                         />
@@ -49,7 +54,7 @@ const whoApply: React.FC<requestForId> = ({ requestForId }) => {
                             name="who"
                             type="radio"
                             value={2}
-                            checked={id === 2}
+                            checked={id == 2}
                             onChange={handleChange}
                         />
                         <div>

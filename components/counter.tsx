@@ -5,11 +5,12 @@ import { useState } from "react";
 // Define the props type, specifying that onCountChange is a function that takes a number
 interface CounterProps {
   onCountChange: (count: number) => void;
+  odai:number;
 }
 
-const Counter: React.FC<CounterProps> = ({ onCountChange }) => {
-  const [count, setCount] = useState(0);
-
+const Counter: React.FC<CounterProps> = ({ onCountChange,odai }) => {
+ 
+  const [count, setCount] = useState(odai);
   const increment = () => {
     const newCount = count + 1;
     setCount(newCount);

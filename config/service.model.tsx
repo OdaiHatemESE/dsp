@@ -61,7 +61,7 @@ export interface ServiceForm {
 export interface StudyDetails {
   requestTypeId: number;
   numberOfCopies: number;
-  emirateId: number;
+  emirateSchoolId: string;
   comment: string;
   schoolId: number;
   schoolName: string;
@@ -120,7 +120,6 @@ export interface StudyDetailsForm {
   applicantId?: number; // integer($int32)
   requestForId?: number; // integer($int32)
   relationshipId?: string; // integer($int32) - optional if not always present
-  emirateId?: string; // integer($int32)
   emirateSchoolId?: string; // integer($int32)
   regionId?: number; // integer($int32)
   requestTypeId?: number; // integer($int32)
@@ -142,7 +141,7 @@ export interface StudyDetailsForm {
   sisStudentControl?: object; // optional new field, replace with the correct type if known
   haveEmiratesId?: boolean; // optional new field
   previousAttachments?: any; // optional new field, replace with the correct type if known
-
+  emirateId:string
 }
 
 
