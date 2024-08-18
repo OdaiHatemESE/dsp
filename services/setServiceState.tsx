@@ -34,6 +34,7 @@ const setServiceState = ({ serviceId, whoApply }: Params) => {
       const data = await getIssuanceApplication(appId);
 
       let updatedserviceState = serviceState ?? {} as ServiceForm;
+      console.log('attchment',data?.application.attachments);
       updatedserviceState = {
         id: service?.id ?? '',
         requestForId: data.application.requestForId,
@@ -43,7 +44,7 @@ const setServiceState = ({ serviceId, whoApply }: Params) => {
         currentStepIndex: 1,
         applicantInformation: data.applicant,
         form: data,
-        attachment: serviceState?.attachment,
+        attachment: data?.application.attachments,
         applicationId: parseInt(appId)
 
       }

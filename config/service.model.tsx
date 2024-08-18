@@ -20,12 +20,12 @@ export interface Service {
 }
 
 export interface AttachmentList {
-  attachmentId: string;
-  attachmentLabel: string;
-  required: boolean,
-  attachmentType: string;
-  attachmentNote: string,
-  attachmentFile?: ArrayBuffer;
+  attachmentId?: string;
+  attachmentLabel?: string;
+  required?: boolean,
+  attachmentType?: string;
+  attachmentNote?: string,
+  attachmentFile?: any[];
 
 }
 
@@ -46,7 +46,7 @@ export interface ServiceForm {
   currentStepIndex?: number;
   applicantInformation?: UserProfile;
   form?: any;
-  attachment?: AttachmentList[];
+  attachment?: any;
   applicationId?:any;
 }
 

@@ -20,28 +20,25 @@ import { UserProfile } from '@/config/user.modal';
 import { savaAsDraft } from '@/services/savaAsDraft';
 
 const validationSchema = Yup.object().shape({
-    requestTypeId: Yup.string(),
-    numberOfCopies: Yup.string(),
+    requestTypeId: Yup.number(),
+    numberOfCopies: Yup.number(),
     emirateSchoolId: Yup.string().required('Emirate is required'),
-    academicYearId: Yup.string().required('Academic year is required'),
+    academicYearId: Yup.number().required('Academic year is required'),
     gradeId: Yup.string().required('School grade is required'),
     schoolName: Yup.string().required('School name is required'),
-    sisNumber: Yup.string(),
-    comment: Yup.string(),
     isMofaicAttested: Yup.bool(),
-    destinationCountryId: Yup.string().test(
+    destinationCountryId: Yup.number().nullable().test(
         'is-required-if-mofaic-attested',
         'Destination country is required when MOFAIC attestation is selected',
         function (value) {
-            const { IsMofaicAttested } = this.parent;
-            if (IsMofaicAttested) {
-                return !!value; // Return true if value is provided, false otherwise
+            const { isMofaicAttested } = this.parent;
+            if (isMofaicAttested) {
+                return value !== null && value !== undefined; // Validate only if isMofaicAttested is true
             }
-            return true; // No validation needed if IsMofaicAttested is false
+            return true; // No validation needed if isMofaicAttested is false
         }
     ),
 });
-
 
 
 interface params {
@@ -52,7 +49,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
     console.log('toz')
     const { nextStep, prevStep } = useStepper();
     const router = useRouter();
- 
+
     const serviceState = useAppSelector((state) => state.service.service); // Get Service State  
 
     const emirateId = serviceState?.applicantInformation?.emiratesId
@@ -80,7 +77,6 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
 
     const [formData, setFormData] = useState<StudyDetailsForm>({
         requestTypeId: updatedService.form.requestTypeId ?? 1,
-
         numberOfCopies: updatedService.form.numberOfCopies,
         emirateId: updatedService.form.emirateSchoolId,
         emirateSchoolId: updatedService.form.emirateSchoolId ?? updatedService.form.emirateId,
@@ -90,7 +86,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
         sisNumber: updatedService.form.sisNumber,
         comment: updatedService.form.comment,
         isMofaicAttested: updatedService.form.isMofaicAttested ?? false,
-        destinationCountryId: updatedService.form.destinationCountryId,
+        destinationCountryId: updatedService.form.destinationCountryId ?? null,
         sourceChannel: updatedService.form.sourceChannel,
         houseNumber: updatedService.form.houseNumber,
         applicationId: updatedService.applicationId,
@@ -104,12 +100,13 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
         applicantId: updatedService.form.applicantId ?? applicantId,
     });
 
+    console.log(formData.isMofaicAttested)
+
 
     useEffect(() => {
-
         formData.numberOfCopies = count;
         if (studentInfo && lookups) {
-
+            console.log(studentInfo)
             console.log('have data student');
             // Handle student information if necessary
 
@@ -122,7 +119,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                     gradeId: formData.gradeId ?? studentInfo.gradeId
                 };
 
-                setCount(updatedFormData.numberOfCopies ?? 10)
+                setCount(updatedFormData.numberOfCopies ?? 0)
 
                 setValue('sisNumber', updatedFormData.sisNumber);
                 setValue('emirateSchoolId', updatedFormData.emirateSchoolId);
@@ -141,7 +138,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
 
 
 
-    const [IsMofaicAttested, setIsMofaicAttested] = useState<boolean>(false);
+
     const [showMofic, setshowMofic] = useState<boolean>(true);
     const { register, handleSubmit, getValues, formState: { errors }, setValue } = useForm({
         resolver: yupResolver(validationSchema),
@@ -167,11 +164,22 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
     const save = async () => {
         // Capture the latest form values
         let data = getValues();
-        // Update the formData state with the latest form values before saving
-        data = { ...data, numberOfCopies: count };
-        const updatedService = { ...serviceState, form: data } as ServiceForm;
+        console.clear();
+        
+        let isMofaicAttestedString = data.isMofaicAttested?.toString();
+        let isMofaicAttestedBoolen:any = isMofaicAttestedString === 'true' ? true : isMofaicAttestedString === 'false' ? false : isMofaicAttestedString;
+            // Update the formData state with the latest form values before saving
+        data = { ...data, numberOfCopies: count, isMofaicAttested: isMofaicAttestedBoolen };
+        let updatedService = { ...serviceState, form: data } as ServiceForm;
         dispath(setService(updatedService));
-        savaAsDraft(updatedService);
+        const res = await savaAsDraft(updatedService,[]);
+        console.log('Data posted successfully:', res);
+
+        updatedService = { ...updatedService, applicationId: res.id }
+        dispath(setService(updatedService));
+
+
+
     };
 
     const onSubmit = (data: any, event: any) => {
@@ -181,6 +189,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
 
         dispath(setService(service))
         if (buttonClicked == 'next') {
+            save();
             nextStep();
         } else {
             prevStep();
@@ -366,8 +375,8 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                                     aria-describedby="yesMOFAIC-description"
                                     type="radio"
                                     {...register('isMofaicAttested')}
-                                    value="true"
-                                    checked={formData.isMofaicAttested === true}
+                                    value={true}
+                                    checked={formData.isMofaicAttested == true}
                                     onChange={handleRadioChange}
 
 
@@ -387,9 +396,9 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                                     aria-describedby="noMOFAIC-description"
                                     type="radio"
 
-                                    {...register('isMofaicAttested', { value: false })}
-                                    value="false"
-                                    checked={formData.isMofaicAttested === false}
+                                    {...register('isMofaicAttested')}
+                                    value={false}
+                                    checked={formData.isMofaicAttested == false}
                                     onChange={handleRadioChange}
                                 />
                                 <div>
@@ -401,8 +410,12 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                             </div>
                         </div>
                     </div>
-                    {formData.isMofaicAttested && (
+                 
+
+                    {formData.isMofaicAttested === true && (
+
                         <div className="w-full mb-5">
+
                             <div className={classNames({ "control-error": errors.destinationCountryId }, 'aegov-form-control')} >
                                 <label htmlFor="schoolGrade">Select country to attest for</label>
                                 <div className="form-control-input">

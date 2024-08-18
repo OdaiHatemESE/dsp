@@ -97,6 +97,15 @@ const Summary: React.FC<params> = ({ serviceId }) => {
             <hr className="mt-10" />
             <div className="mt-10">
                 <h1 className="text-xl mb-5">Attachments</h1>
+                <div>
+                    {serviceState?.attachment.map((file)=>{
+                        return <div key={file.id} className="flex items-center mb-4">
+                            <div className="w-1/2 font-bold text-gray-700">
+                            <a href={file.attachmentUrl}>{file.attachmentName}</a></div>
+                            </div>
+
+                    })}
+                </div>
             </div>
 
 
