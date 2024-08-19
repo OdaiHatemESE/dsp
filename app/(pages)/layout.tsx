@@ -7,7 +7,7 @@ export default function innerLayout({
   }) {
     return (
       <main className="container">
-        <Breadcrumbs serviceId=""/>
+        <Breadcrumbs serviceId="" type="general"/>
         {children}
       </main>
     )

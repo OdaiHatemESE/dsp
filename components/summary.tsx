@@ -106,9 +106,10 @@ const Summary: React.FC<params> = ({ serviceId }) => {
                     </div>
                 </div>
             </div>
-
-            <hr className="mt-10" />
+{serviceState?.attachment &&
+            
             <div className="mt-10">
+                <hr className="mt-10" />
                 <h1 className="text-xl mb-5">Attachments</h1>
                 <div className="overflow-x-auto p-4 bg-gray-100">
                     <div className=" mx-auto bg-white  rounded-lg p-6">
@@ -140,6 +141,8 @@ const Summary: React.FC<params> = ({ serviceId }) => {
 
                 </div>
             </div>
+
+}
             <hr className="mt-10" />
             <div className="mt-10">
                 <h1 className="text-xl mb-5">Payment Details</h1>

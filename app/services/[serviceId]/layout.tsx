@@ -19,18 +19,19 @@ export default function Layout({ children, params }: { children: React.ReactNode
     const serviceState = useAppSelector((state) => state.service.service)
     const whoApply = serviceState?.requestForId ?? 1; // Replace this with the actual value needed
     const service = ServiceConfig.find((service) => service.serviceId === serviceId);
-    let steps=service?.steps;
+    let steps = service?.steps;
 
-      
-   
+
+
     setServiceState({ serviceId, whoApply });
 
 
     return (
-        
+
         <main role="main" className="container">
- 
-            <Breadcrumbs serviceId={serviceId} />
+
+            <Breadcrumbs serviceId={serviceId} type="services" />
+            <h3 className="mb-10">{service?.serviceName}</h3>
             <div className="w-full pt-1 px-2">
                 <StepperProvider initialSteps={steps} serviceId={serviceId}>
                     <Steper serviceId={serviceId} />

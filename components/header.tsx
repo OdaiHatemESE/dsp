@@ -1,4 +1,8 @@
+import Link from 'next/link'
+
 export default function Header() {
+
+   
     return (
         <header className="aegov-header">
         <div className="header-desktop hidden lg:block">
@@ -51,10 +55,12 @@ export default function Header() {
                                 </a>
                              </li>
                              <li className="menu-item lg:inline-flex lg:items-center has-link-icon">
-                                <a href="/myapplications" className="hover:!text-primary-800 hover:!border-primary-800">
-                                  
-                                   <span>My Application</span> 
-                                </a>
+                                
+                                <Link href="/myapplications" className="hover:!text-primary-800 hover:!border-primary-800">My Application</Link>
+                             </li>
+                             <li className="menu-item lg:inline-flex lg:items-center has-link-icon">
+                               
+                                <Link href="/serviceCataloge" className="hover:!text-primary-800 hover:!border-primary-800">Service Cataloge</Link>
                              </li>
                             
                           </ul>

@@ -7,4 +7,4 @@ const ShippingAddress :React.FC = () =>{
         
 }
 
-export default ShippingAddress
+export default ShippingAddress;
