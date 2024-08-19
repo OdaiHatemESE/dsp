@@ -1,6 +1,7 @@
 import { UserProfile } from "@/config/user.modal";
 import fetchWithAuth from "./fetchWithAuth";
 import { useAppSelector } from "@/store/lib/hooks";
+import useSWR from "swr";
 
 
 export const getUser = async (): Promise<UserProfile> => {
@@ -15,37 +16,48 @@ export const getUser = async (): Promise<UserProfile> => {
   }
 };
 
-interface SubProfile {
-  errorMessage: string,
-  errorMessageAr: string,
-  isSuccess: boolean,
-  response: UserProfile,
-  statusCode: number
+
+
+export const useGetUser =  () => {
+  const { data, error } = useSWR(['UserInfo'], () => getUser());
+  return {
+    userInfo: data as UserProfile,
+    isLoading: !data && !error,
+    isError: error,
+  }
 }
 
-export const addSubProfile = async ({ applicant }: { applicant: UserProfile }): Promise<SubProfile> => {
-  console.log('Adding sub-profile for applicant:', applicant);
-
-  try {
-    const response = await fetchWithAuth('uap/api/Profile/UpdateSubProfile', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(applicant),
-    });
-
-    if (!response.ok) {
-      const errorDetails = await response.text();
-      throw new Error(`Failed to add sub-profile: ${response.status} ${response.statusText}. Details: ${errorDetails}`);
-    }
-
-    const res: SubProfile = await response.json();
-    console.log('Sub-profile added successfully:', res);
-    return res;
-  } catch (error) {
-    console.error('Error adding sub-profile:', error);
-    throw new Error('Failed to add sub-profile.');
+  interface SubProfile {
+    errorMessage: string,
+    errorMessageAr: string,
+    isSuccess: boolean,
+    response: UserProfile,
+    statusCode: number
   }
-};
+
+  export const addSubProfile = async ({ applicant }: { applicant: UserProfile }): Promise<SubProfile> => {
+    console.log('Adding sub-profile for applicant:', applicant);
+
+    try {
+      const response = await fetchWithAuth('uap/api/Profile/UpdateSubProfile', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(applicant),
+      });
+
+      if (!response.ok) {
+        const errorDetails = await response.text();
+        throw new Error(`Failed to add sub-profile: ${response.status} ${response.statusText}. Details: ${errorDetails}`);
+      }
+
+      const res: SubProfile = await response.json();
+      console.log('Sub-profile added successfully:', res);
+      return res;
+    } catch (error) {
+      console.error('Error adding sub-profile:', error);
+      throw new Error('Failed to add sub-profile.');
+    }
+  };

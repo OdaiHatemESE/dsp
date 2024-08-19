@@ -3,43 +3,25 @@ import { useEffect, useRef, useState } from 'react'
 import { Provider } from 'react-redux'
 import { makeStore, AppStore } from '../store/lib/store'
 import { UserProfile } from '@/config/user.modal'
-import { getUser } from '@/services/userprofile'
+import { getUser, useGetUser } from '@/services/userprofile'
 
 import { setUser } from '@/store/slices/userSlice'
+import Spinner from '@/components/spinner'
 export default function StoreProvider({
     children
 }: {
     children: React.ReactNode
 }) {
     const storeRef = useRef<AppStore>()
-
     if (!storeRef.current) {
         // Create the store instance the first time this renders
         storeRef.current = makeStore()
     }
 
-   
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-     
-        const fetchUser = async () => {
-            try {
-                  const userData = await getUser();
-               
-                 storeRef.current?.dispatch(setUser(userData))
-            } catch (error) {
-                setError('Failed to fetch user');
-            }
-        };
-
-        fetchUser();
-    }, []);
-
-    if (error) {
-        return <div className="error">{error}</div>;
-    }
-
-
+    const { userInfo, isLoading, isError } = useGetUser();
+    if (isLoading) return <Spinner />
+    if (isError) return <div>{isError}</div>
+    storeRef.current?.dispatch(setUser(userInfo))
+    
     return <Provider store={storeRef.current}>{children}</Provider>
 }

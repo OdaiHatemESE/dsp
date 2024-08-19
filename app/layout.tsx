@@ -7,6 +7,8 @@ import StoreProvider from "./StoreProvider";
 import Breadcrumbs from "@/components/breadcrumb";
 
 const inter = Inter({ subsets: ["latin"] });
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const metadata: Metadata = {
   title: "Digital Services Portal",
@@ -25,9 +27,10 @@ export default async function RootLayout({
     <html lang="en">
 
       <body className={inter.className}>
+   
         <StoreProvider>
+        <ToastContainer autoClose={4000}   />
           <Header></Header>
-          
           {children}
         </StoreProvider>
       </body>

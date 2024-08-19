@@ -18,6 +18,7 @@ import Spinner from '@/components/spinner';
 import fetchWithAuth from '@/services/fetchWithAuth';
 import { UserProfile } from '@/config/user.modal';
 import { savaAsDraft } from '@/services/savaAsDraft';
+import { toast, ToastOptions } from 'react-toastify';
 
 const validationSchema = Yup.object().shape({
     requestTypeId: Yup.number(),
@@ -61,13 +62,13 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
     const dispath = useAppDispatch();
 
     const [count, setCount] = useState<number>(updatedService.form.numberOfCopies ?? 0);
+    const [loader, setLoader] = useState<boolean>(false);
 
 
 
-
-    const { lookups, isLoading, isError } = useGeneralLookups();
+    let { lookups, isLoading, isError } = useGeneralLookups();
     const { studentInfo, isLoadingInfo, isErrorInfo } = getStudentInfo(emirateId ?? '');
-
+    const [showMofic, setshowMofic] = useState<boolean>(true);
 
     const emirates = lookups?.Emirate;
     const schoolGrades = lookups?.Grade;
@@ -100,16 +101,13 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
         applicantId: updatedService.form.applicantId ?? applicantId,
     });
 
-    console.log(formData.isMofaicAttested)
+
 
 
     useEffect(() => {
         formData.numberOfCopies = count;
         if (studentInfo && lookups) {
-            console.log(studentInfo)
-            console.log('have data student');
             // Handle student information if necessary
-
             if (studentInfo.studentNumber) {
                 let updatedFormData: StudyDetailsForm = {
                     ...formData,
@@ -135,11 +133,6 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
 
 
 
-
-
-
-
-    const [showMofic, setshowMofic] = useState<boolean>(true);
     const { register, handleSubmit, getValues, formState: { errors }, setValue } = useForm({
         resolver: yupResolver(validationSchema),
         defaultValues: formData
@@ -163,17 +156,23 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
 
     const save = async () => {
         // Capture the latest form values
+        setLoader(true);
         let data = getValues();
-        console.clear();
-        
+
+
         let isMofaicAttestedString = data.isMofaicAttested?.toString();
-        let isMofaicAttestedBoolen:any = isMofaicAttestedString === 'true' ? true : isMofaicAttestedString === 'false' ? false : isMofaicAttestedString;
-            // Update the formData state with the latest form values before saving
+        let isMofaicAttestedBoolen: any = isMofaicAttestedString === 'true' ? true : isMofaicAttestedString === 'false' ? false : isMofaicAttestedString;
+        // Update the formData state with the latest form values before saving
         data = { ...data, numberOfCopies: count, isMofaicAttested: isMofaicAttestedBoolen };
         let updatedService = { ...serviceState, form: data } as ServiceForm;
         dispath(setService(updatedService));
-        const res = await savaAsDraft(updatedService,[]);
-        console.log('Data posted successfully:', res);
+        const res = await savaAsDraft(updatedService, []);
+        if (res) {
+            setLoader(false);
+            toast.success('Draft saved Successfully');
+            
+        }
+
 
         updatedService = { ...updatedService, applicationId: res.id }
         dispath(setService(updatedService));
@@ -181,8 +180,9 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
 
 
     };
-
+     
     const onSubmit = (data: any, event: any) => {
+
 
         const buttonClicked = event.nativeEvent.submitter.name
         const service = { ...serviceState, form: data } as ServiceForm;
@@ -212,6 +212,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
+            {loader && <Spinner></Spinner>}
             <h5>Request Type</h5>
             <p className="text-sm text-gray-500 mt-1">What type of document you request</p>
             <div className="flex flex-col md:flex-row justify-between">
@@ -354,7 +355,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                             {...register('comment')}
                             cols={10}
                             rows={10}
-                            value={formData.comment}
+
 
                             placeholder="Example: I am submitting the application for a student who does not have an ID. I need a printed paper copy for use outside the country."
                         ></textarea>
@@ -410,7 +411,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                             </div>
                         </div>
                     </div>
-                 
+
 
                     {formData.isMofaicAttested === true && (
 
