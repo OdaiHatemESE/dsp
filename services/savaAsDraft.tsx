@@ -21,6 +21,7 @@ export const savaAsDraft = async (serviceState: any, attachments: AttachmentList
     if(attachments.length>0){
         attachments.forEach((attachment) => {
             attachment.attachmentFile?.forEach((file)=>{
+                console.log(file);
                 form.append('other', file);
             })
         })

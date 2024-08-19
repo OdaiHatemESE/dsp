@@ -34,9 +34,9 @@ const setServiceState = ({ serviceId, whoApply }: Params) => {
       const data = await getIssuanceApplication(appId);
 
       let updatedserviceState = serviceState ?? {} as ServiceForm;
-      console.log('attchment',data?.application.attachments);
+      console.log('attchment', data?.application.attachments);
       updatedserviceState = {
-        id: service?.id ?? '',
+        id: service?.applicationDefinitionId ?? undefined,
         requestForId: data.application.requestForId,
         serviceId: service?.serviceId,
         serviceName: service?.serviceName,
@@ -62,13 +62,13 @@ const setServiceState = ({ serviceId, whoApply }: Params) => {
       }
     }, [data])
 
-  
+
 
   } else {
     useEffect(() => {
       let updatedserviceState = serviceState ?? {} as ServiceForm;
       updatedserviceState = {
-        id: service?.id ?? '',
+        id: service?.applicationDefinitionId ?? undefined,
         requestForId: Number(whoApply),
         serviceId: service?.serviceId,
         serviceName: service?.serviceName,
@@ -77,7 +77,7 @@ const setServiceState = ({ serviceId, whoApply }: Params) => {
         applicantInformation: mainUser ?? {} as UserProfile,
         form: updatedserviceState.form ?? service?.form,
         attachment: serviceState?.attachment,
-        applicationId:null,
+        applicationId: null,
 
       }
 

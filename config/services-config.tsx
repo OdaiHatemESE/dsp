@@ -54,7 +54,7 @@ export const ServiceConfig: Service[] = [
             attachmentLabel: 'other',
             attachmentFile: {} as ArrayBuffer,
             attachmentNote: 'Not Exceed 20 MB',
-            required: true
+            required: false
          },
          {
             attachmentId: '2021',

@@ -6,6 +6,8 @@ import { useGeneralLookups } from "@/lookups/lookupService";
 import Spinner from "./spinner";
 import { StudyDetailsForm } from "@/config/service.model";
 import { UserProfile } from "@/config/user.modal";
+import PaymentDetails from "./paymentDetails";
+import { getPaymentUrl } from "@/services/getPaymentDetails";
 
 interface params {
     serviceId: string
@@ -31,50 +33,61 @@ const Summary: React.FC<params> = ({ serviceId }) => {
 
     const lookupField = (key: string, value: any) => {
         switch (key) {
-            case "RequestTypeId": { return value == 1 ? 'Soft Copy' : 'Hard Copy' }
-            case "EmirateSchoolId": { return lookups?.Emirate.find((item) => item.id == value)?.titleEn; }
-            case "AcademicYearId": { return lookups?.AcademicYear.find((item) => item.id == value)?.titleEn }
-            case "GradeId": { return lookups?.Grade.find((item) => item.id == value)?.titleEn || "" }
-            case "RequestForId": { return value == 1 ? 'For Me' : 'For Another person' }
+            case "requestTypeId": { return value == 1 ? 'Soft Copy' : 'Hard Copy' }
+            case "emirateSchoolId": { return lookups?.Emirate.find((item) => item.id == value)?.titleEn; }
+            case "academicYearId": { return lookups?.AcademicYear.find((item) => item.id == value)?.titleEn }
+            case "gradeId": { return lookups?.Grade.find((item) => item.id == value)?.titleEn || "" }
+            case "requestForId": { return value == 1 ? 'For Me' : 'For Another person' }
             default:
                 return value;
         }
     };
+
+
+    const handelPayment = async () => {
+        const res = await getPaymentUrl(serviceState?.applicationId);
+        if(res){
+
+            window.location.href = res.paymentUrl;
+            return <Spinner />
+        }
+    }
+
     return (
         <section>
             <h1 className="text-xl mb-5">Applicant Information</h1>
             <div className="bg-white border border-gray-200 rounded-lg">
-    <div className="flex flex-wrap">
-        <div className="w-full sm:w-2/2 md:w-3/3 lg:w-2/4 p-4 border-b border-gray-200 flex">
-            <div className="w-1/2 font-bold text-gray-700">Emirate ID</div>
-            <div className="w-1/2 text-gray-600">{serviceState?.applicantInformation?.emiratesId}</div>
-        </div>
-        <div className="w-full sm:w-2/2 md:w-3/3 lg:w-2/4 p-4 border-b border-gray-200 flex">
-            <div className="w-1/2 font-bold text-gray-700">Name</div>
-            <div className="w-1/2 text-gray-600">{serviceState?.applicantInformation?.fullNameEn}</div>
-        </div>
-        <div className="w-full sm:w-2/2 md:w-3/3 lg:w-2/4 p-4 border-b border-gray-200 flex">
-            <div className="w-1/2 font-bold text-gray-700">Gender</div>
-            <div className="w-1/2 text-gray-600">{serviceState?.applicantInformation?.genderId == 1 ? 'Male' : 'Female'}</div>
-        </div>
-        <div className="w-full sm:w-2/2 md:w-3/3 lg:w-2/4 p-4 border-b border-gray-200 flex">
-            <div className="w-1/2 font-bold text-gray-700">Mobile Number</div>
-            <div className="w-1/2 text-gray-600">{serviceState?.applicantInformation?.address.mobileNumber}</div>
-        </div>
-        <div className="w-full sm:w-1/2 md:w-3/3 lg:w-2/4 p-4 border-b border-gray-200 flex">
-            <div className="w-1/2  font-bold text-gray-700">Email</div>
-            <div className="w-1/2 text-gray-600">{serviceState?.applicantInformation?.address.email}</div>
-        </div>
-        <div className="w-full sm:w-2/2 md:w-3/3 lg:w-2/4 p-4 border-b border-gray-200 flex">
-            <div className="w-1/2 font-bold text-gray-700">Nationality</div>
-            <div className="w-1/2 text-gray-600">{serviceState?.applicantInformation?.nationality.titleEn}</div>
-        </div>
-        <div className="w-full sm:w-2/2 md:w-3/3 lg:w-2/4 p-4 flex">
-            <div className="w-1/2 font-bold text-gray-700">User Type</div>
-            <div className="w-1/2 text-gray-600">{/* Add content for User Type here */}</div>
-        </div>
-    </div>
-</div>
+                <div className="flex flex-wrap">
+                    <div className="w-full sm:w-2/2 md:w-3/3 lg:w-2/4 p-4 border-b border-gray-200 flex">
+                        <div className="w-1/2 font-bold text-gray-700">Emirate ID</div>
+                        <div className="w-1/2 text-gray-600">{serviceState?.applicantInformation?.emiratesId}</div>
+                    </div>
+                    <div className="w-full sm:w-2/2 md:w-3/3 lg:w-2/4 p-4 border-b border-gray-200 flex">
+                        <div className="w-1/2 font-bold text-gray-700">Name</div>
+                        <div className="w-1/2 text-gray-600">{serviceState?.applicantInformation?.fullNameEn}</div>
+                    </div>
+                    <div className="w-full sm:w-2/2 md:w-3/3 lg:w-2/4 p-4 border-b border-gray-200 flex">
+                        <div className="w-1/2 font-bold text-gray-700">Gender</div>
+                        <div className="w-1/2 text-gray-600">{serviceState?.applicantInformation?.genderId == 1 ? 'Male' : 'Female'}</div>
+                    </div>
+                    <div className="w-full sm:w-2/2 md:w-3/3 lg:w-2/4 p-4 border-b border-gray-200 flex">
+                        <div className="w-1/2 font-bold text-gray-700">Mobile Number</div>
+                        <div className="w-1/2 text-gray-600">{serviceState?.applicantInformation?.address.mobileNumber}</div>
+                    </div>
+                    <div className="w-full sm:w-1/2 md:w-3/3 lg:w-2/4 p-4 border-b border-gray-200 flex">
+                        <div className="w-1/2  font-bold text-gray-700">Email</div>
+                        <div className="w-1/2 text-gray-600">{serviceState?.applicantInformation?.address.email}</div>
+                    </div>
+                    <div className="w-full sm:w-2/2 md:w-3/3 lg:w-2/4 p-4 border-b border-gray-200 flex">
+                        <div className="w-1/2 font-bold text-gray-700">Nationality</div>
+                        <div className="w-1/2 text-gray-600">{serviceState?.applicantInformation?.nationality.titleEn}</div>
+                    </div>
+                    <div className="w-full sm:w-2/2 md:w-3/3 lg:w-2/4 p-4 flex">
+                        <div className="w-1/2 font-bold text-gray-700">User Type</div>
+                        <div className="w-1/2 text-gray-600">{/* Add content for User Type here */}</div>
+                    </div>
+                </div>
+            </div>
 
 
             <hr className="mt-10" />
@@ -97,14 +110,41 @@ const Summary: React.FC<params> = ({ serviceId }) => {
             <hr className="mt-10" />
             <div className="mt-10">
                 <h1 className="text-xl mb-5">Attachments</h1>
-                <div>
-                    {serviceState?.attachment.map((file)=>{
-                        return <div key={file.id} className="flex items-center mb-4">
-                            <div className="w-1/2 font-bold text-gray-700">
-                            <a href={file.attachmentUrl}>{file.attachmentName}</a></div>
-                            </div>
+                <div className="overflow-x-auto p-4 bg-gray-100">
+                    <div className=" mx-auto bg-white  rounded-lg p-6">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr>
+                                    <th className="border-b py-2 text-gray-700">File Name</th>
+                                    <th className="border-b py-2 text-gray-700">Download Link</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {serviceState?.attachment.map((file: any) => (
+                                    <tr key={file.id} className="border-b last:border-none">
+                                        <td className="py-2 font-bold text-gray-700">{file.attachmentName}</td>
+                                        <td className="py-2">
+                                            <a
+                                                href={file.attachmentUrl}
+                                                className="text-blue-600 hover:underline"
+                                                download
+                                            >
+                                                Download
+                                            </a>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
 
-                    })}
+                </div>
+            </div>
+            <hr className="mt-10" />
+            <div className="mt-10">
+                <h1 className="text-xl mb-5">Payment Details</h1>
+                <div>
+                    <PaymentDetails />
                 </div>
             </div>
 
@@ -143,7 +183,7 @@ const Summary: React.FC<params> = ({ serviceId }) => {
 
                     Previous
                 </button>
-                <button className="aegov-btn btn-lg" type="submit">
+                <button className="aegov-btn btn-lg" type="button" onClick={handelPayment}>
                     Pay
                     <svg
                         className="rtl:-scale-x-100"

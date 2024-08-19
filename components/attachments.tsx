@@ -38,8 +38,10 @@ const Attachments: React.FC<Params> = ({ serviceId }) => {
     let attchmentList = serviceState?.attachment ?? [];
     console.clear();
     console.log(attchmentList)
-    const attachments = service?.attachments ?? [];
-    console.log(attachments);
+    let attachments = service?.attachments ?? [];
+    // if(attchmentList.length>0){
+    //    attachments={...attachments,} 
+    // }
     const dispatch = useAppDispatch();
 
     const fileValidationSchema = (required: boolean) =>
@@ -54,6 +56,7 @@ const Attachments: React.FC<Params> = ({ serviceId }) => {
             .required(required ? "This field is required" : undefined);
 
     const validationSchema = Yup.object().shape(
+
         attachments.reduce((schema, attachment) => {
             schema[attachment.attachmentId] = attachment.required ? fileValidationSchema(attachment.required) : Yup.mixed()
             return schema;
@@ -109,9 +112,11 @@ const Attachments: React.FC<Params> = ({ serviceId }) => {
                                     />
                                 )}
                             />
-                            
+
                         </div>
-                        <div>
+                        {serviceState?.attachment &&
+                            <div>
+
                                 {serviceState?.attachment.map((file) => {
                                     return <div key={file.id} className="flex items-center mb-4">
                                         <div className="w-1/2 font-bold text-gray-700">{file.id}
@@ -120,6 +125,7 @@ const Attachments: React.FC<Params> = ({ serviceId }) => {
 
                                 })}
                             </div>
+                        }
                         {errors[attachment.attachmentId] && <p><span className="error-message">{errors[attachment.attachmentId]?.message}</span></p>}
                     </div>
                 </div>

@@ -38,7 +38,7 @@ export interface ServiceStep {
 
 
 export interface ServiceForm {
-  id?: string;
+  id?: number;
   requestForId?: number,
   serviceId?: string;
   serviceName?: string;
@@ -178,4 +178,26 @@ export interface StudenInfoFromManhal {
     schoolNameEn: string
     studentNumber: string
   }
+}
+
+export interface ServicePayment {
+  serviceId: string | null;
+  serviceName: string | null;
+  serviceNameArabic: string | null;
+  servicePriceAmount: number;
+  totalServiceAmount: number;
+  totalVatAmount: number;
+  quantity: number;
+  isMultipleServices: boolean;
+  serviceList?: ServicePayment[] | null;
+}
+
+export interface PaymentResponseAPI {
+  status: string; // Indicates the status of the payment request (e.g., "1" might indicate success).
+  tokenId: string; // A unique identifier for the payment token, possibly used to reference the payment.
+  paymentUrl: string; // The URL to the payment page where the user can complete the payment process.
+  customMessage: string; // A custom message related to the payment request, such as a confirmation message.
+  errorText: string | null; // Contains any error text if an error occurred during the payment process, or null if no error.
+  customerPulseToken: string | null; // A token possibly related to customer identification or tracking, or null if not applicable.
+  serviceCatalogueDetails: any | null; // Details of the service catalogue, if available, or null if not provided.
 }
