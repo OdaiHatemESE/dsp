@@ -10,7 +10,7 @@ export interface generalLookups {
     EducationZone: [],
     Emirate: Emirate[],
     Grade: Grade[],
-    Nationality: [],
+    Nationality: Nationality[],
     NationalityMofaic: mofaic[],
     Region: [],
     Relationship: [],
@@ -40,6 +40,18 @@ interface mofaic {
     id: number
 }
 
+interface Nationality {
+    code: string;
+    createdBy: string;
+    createdOn: string; // ISO 8601 date string
+    id: number;
+    isActive: boolean;
+    isoCode3: string;
+    modifiedBy: string | null;
+    modifiedOn: string | null; // ISO 8601 date string or null
+    titleAr: string;
+    titleEn: string;
+}
 
 interface Grade {
     code: string;

@@ -8,7 +8,7 @@ import { ServiceConfig } from "@/config/services-config";
 import { AttachmentList, ServiceForm, StudyDetails } from "@/config/service.model";
 import { UserProfile } from "@/config/user.modal";
 import { setUser } from "@/store/slices/userSlice";
-import { getIssuanceApplication } from "./getApplication";
+import { getApplication, getIssuanceApplication } from "./getApplication";
 import Spinner from "@/components/spinner";
 import { setApplicant } from "@/store/slices/applicantSlice";
 
@@ -31,7 +31,7 @@ const setServiceState = ({ serviceId, whoApply }: Params) => {
     // This is edit mode, handle edit mode logic here if needed
     let data = null;
     const fetchData = async () => {
-      const data = await getIssuanceApplication(appId);
+      const data = await getApplication(appId,serviceId);
 
       let updatedserviceState = serviceState ?? {} as ServiceForm;
       console.log('attchment', data?.application.attachments);
@@ -75,7 +75,7 @@ const setServiceState = ({ serviceId, whoApply }: Params) => {
         serviceNameArabic: service?.serviceNameArabic,
         currentStepIndex: 1,
         applicantInformation: mainUser ?? {} as UserProfile,
-        form: updatedserviceState.form ?? service?.form,
+        form:  service?.form,
         attachment: serviceState?.attachment,
         applicationId: null,
 

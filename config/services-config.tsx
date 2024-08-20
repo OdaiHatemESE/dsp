@@ -7,14 +7,13 @@ import UpdateInfoForm from "@/app/services/forms/update-student-info/update-info
 import ShippingAddress from "@/components/shipping-address";
 import issuanceSummary from "@/app/services/forms/issuance-and-attestation/issuance-summary";
 
-const Issuance_and_attestation__applicationDefinitionId = 1;
+ 
 
-const update_student_info__applicationDefinitionId = 3;
 export const ServiceConfig: Service[] = [
    {
       id: '399-03-001-000',
       serviceId: 'issuance-and-attestation',
-      applicationDefinitionId: Issuance_and_attestation__applicationDefinitionId,
+      applicationDefinitionId: 1,
       serviceName: 'Issuance and attestation of school certificate',
       serviceNameArabic: 'طلب تصديق شهادة دراسية - تعليم عام',
       urlAliasName: 'issuance-and-attestation',
@@ -37,6 +36,12 @@ export const ServiceConfig: Service[] = [
             title: 'attachments',
             status: 'step-upcoming',
             component: Attachments
+         },
+         {
+            index: 3,
+            title: 'Shipping Address',
+            status: 'step-upcoming',
+            component: ShippingAddress
          },
          {
             index: 3,
@@ -64,12 +69,16 @@ export const ServiceConfig: Service[] = [
             attachmentNote: 'Not Exceed 20 MB',
             required: false
          }
-      ]
+      ],
+      endPoints:{
+         'saveAsDraft':'certificates/v1/SaveAsDraft',
+         'getApplication':'certificates/v1/GetCertificateByApplicationId/'
+      }
    },
    {
       id: '399-03-001-000',
       serviceId: 'update-student-info',
-      applicationDefinitionId: update_student_info__applicationDefinitionId,
+      applicationDefinitionId: 3,
       serviceName: 'Request To Modify Data Of A Previous Student',
       serviceNameArabic: 'طلب تعديل بيانات طالب سابق',
       urlAliasName: 'update-student-info',
@@ -125,7 +134,11 @@ export const ServiceConfig: Service[] = [
             attachmentNote: 'Not Exceed 20 MB',
             required: false
          }
-      ]
+      ],
+      endPoints:{
+         saveAsDraft:'certificates/v1/CreateStudentDataModify',
+         getApplication:'certificates/v1/GetModifiedStudentData?Id='
+      }
    },
 
 ];

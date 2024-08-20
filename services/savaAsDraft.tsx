@@ -1,16 +1,18 @@
 
 import { AttachmentList } from "@/config/service.model";
 import fetchWithAuth from "./fetchWithAuth";
+import { ServiceConfig } from "@/config/services-config";
 export const savaAsDraft = async (serviceState: any, attachments: AttachmentList[]) => {
     const data = serviceState?.form;
-    //  console.clear();
-    // console.log(data);
+    console.clear();
+     console.log(data);
     const form = new FormData();
     const serviceId = serviceState?.serviceId;
+    const service = ServiceConfig.find((service) => service.serviceId == serviceId);
+
     let count = data.numberOfCopies;
 
     Object.keys(data).forEach((key) => {
-
         if (key == 'numberOfCopies') {
             form.append(key, count.toString());
         } else {
@@ -18,9 +20,9 @@ export const savaAsDraft = async (serviceState: any, attachments: AttachmentList
         }
     });
 
-    if(attachments.length>0){
+    if (attachments.length > 0) {
         attachments.forEach((attachment) => {
-            attachment.attachmentFile?.forEach((file)=>{
+            attachment.attachmentFile?.forEach((file) => {
                 console.log(file);
                 form.append('other', file);
             })
@@ -29,7 +31,7 @@ export const savaAsDraft = async (serviceState: any, attachments: AttachmentList
 
 
     try {
-        const response = await fetchWithAuth('certificates/v1/SaveAsDraft', {
+        const response = await fetchWithAuth(service?.endPoints?.saveAsDraft, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

@@ -14,7 +14,11 @@ export interface Service {
   steps: ServiceStep[];
   form: {},
   attachments: AttachmentList[],
-  summary?: React.FC
+  summary?: React.FC,
+  endPoints?:{
+    saveAsDraft:any,
+    getApplication:any
+  }
 
 
 }
@@ -148,25 +152,26 @@ export interface StudyDetailsForm {
 
 
 export interface UpdateStudentForm {
-  RequestForId: number;
+  requestForId: number;
   isOriginalCertificate: boolean;
-  Comment: string;
-  OldNationalityId: number;
-  NewNationalityId: number;
-  OldNationalityAr: string;
-  OldNationalityEn: string;
+  comment: string;
+  oldNationalityId: number;
+  newNationalityId: number;
+  oldNationalityAr: string;
+  oldNationalityEn: string;
   changeName: boolean;
   changeBirthOfDate: boolean;
   changePlaceOfBirth: boolean;
   changeNationality: boolean;
   haveEmiratesId: boolean;
-  NameAr: string;
-  NameEn: string;
-  PlaceOfBirthAr: string;
-  PlaceOfBirthEn: string;
-  BirthOfDate: string; // Using string to represent the date
-  EmiratesIDNumber: string; // Assuming this might be a number or alphanumeric
-  ApplicantId: number;
+  nameAr: string;
+  nameEn: string;
+  placeOfBirthAr: string;
+  placeOfBirthEn: string;
+  birthOfDate: string; // Using string to represent the date
+  emiratesIDNumber: string; // Assuming this might be a number or alphanumeric
+  applicantId: number;
+  applicationId:any
 }
 
 export interface StudenInfoFromManhal {

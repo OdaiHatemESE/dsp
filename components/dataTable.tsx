@@ -1,4 +1,5 @@
 'use client';
+import { ServiceConfig } from '@/config/services-config';
 import React from 'react';
 import DataTable from 'react-data-table-component';
 
@@ -19,7 +20,7 @@ interface Action {
     iconColor?: string;
     title: string;
     url: string;
-    mode:string
+    mode: string;
 }
 
 interface TableConfig {
@@ -39,13 +40,23 @@ const myApplications: TableConfig = {
             icon: 'Edit',
             iconColor: 'primary',
             title: 'Edit',
-            url: '/services/issuance-and-attestation',
-            mode:'edit'
+            url: '/services/', // The base URL for services
+            mode: 'edit'
         },
     ]
 };
 
+const getServiceUrl = (applicationDefinitionId: number) => {
+
+    let service = ServiceConfig.find((service) => service.applicationDefinitionId == applicationDefinitionId);
+    return service?.serviceId;
+
+}
+
 const getColumns = (id: string): TableConfig => {
+
+
+
     switch (id) {
         case 'myApplications':
             return myApplications;
@@ -56,7 +67,7 @@ const getColumns = (id: string): TableConfig => {
 
 const ESEDataTable: React.FC<Params> = ({ data, pageSize, pageId }) => {
     const tableConfig = getColumns(pageId);
-
+    console.log(data);
     return (
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -86,7 +97,7 @@ const ESEDataTable: React.FC<Params> = ({ data, pageSize, pageId }) => {
                             <td className="flex space-x-2">
                                 {tableConfig.actions.map((action) => (
                                     <a
-                                        href={`${action.url}?requestId=${app.requestId}&mode=${action.mode}`}
+                                        href={`${action.url}${getServiceUrl(app.applicationDefinitionId)}?requestId=${app.requestId}&mode=${action.mode}`}
                                         key={action.title}
                                         className="aegov-btn btn-link text-primary-600"
                                         title={action.title}

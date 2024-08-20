@@ -8,7 +8,7 @@ import * as Yup from 'yup';
 import classNames from 'classnames';
 import { useAppDispatch, useAppSelector } from '@/store/lib/hooks';
 import { setService } from '@/store/slices/serviceSlice';
-import { ServiceForm, StudyDetailsForm } from '@/config/service.model';
+import { ServiceForm, ServiceStep, StudyDetailsForm } from '@/config/service.model';
 import { useRouter } from "next/navigation";
 import { useStepper } from '@/components/steper/stepperProvider';
 import Counter from '@/components/counter';
@@ -19,6 +19,7 @@ import fetchWithAuth from '@/services/fetchWithAuth';
 import { UserProfile } from '@/config/user.modal';
 import { savaAsDraft } from '@/services/savaAsDraft';
 import { toast, ToastOptions } from 'react-toastify';
+import ShippingAddress from '@/components/shipping-address';
 
 const validationSchema = Yup.object().shape({
     requestTypeId: Yup.number(),
@@ -47,25 +48,16 @@ interface params {
 }
 
 const StudyDetails: React.FC<params> = ({ serviceId }) => {
-    console.log('toz')
-    const { nextStep, prevStep } = useStepper();
+    
+    const { nextStep, prevStep, addDynamicStep, removeStep } = useStepper();
     const router = useRouter();
-
     const serviceState = useAppSelector((state) => state.service.service); // Get Service State  
-
     const emirateId = serviceState?.applicantInformation?.emiratesId
     const applicantId = serviceState?.applicantInformation?.id;
-
     let updatedService = { ...serviceState, form: serviceState?.form ?? {} as StudyDetailsForm }
-
-
     const dispath = useAppDispatch();
-
     const [count, setCount] = useState<number>(updatedService.form.numberOfCopies ?? 0);
     const [loader, setLoader] = useState<boolean>(false);
-
-
-
     let { lookups, isLoading, isError } = useGeneralLookups();
     const { studentInfo, isLoadingInfo, isErrorInfo } = getStudentInfo(emirateId ?? '');
     const [showMofic, setshowMofic] = useState<boolean>(true);
@@ -74,8 +66,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
     const schoolGrades = lookups?.Grade;
     const academicYearList = lookups?.AcademicYear;
     const moficCountriesList = lookups?.NationalityMofaic;
-
-
+   
     const [formData, setFormData] = useState<StudyDetailsForm>({
         requestTypeId: updatedService.form.requestTypeId ?? 1,
         numberOfCopies: updatedService.form.numberOfCopies,
@@ -101,7 +92,11 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
         applicantId: updatedService.form.applicantId ?? applicantId,
     });
 
+    const { register, handleSubmit, getValues, formState: { errors }, setValue } = useForm({
+        resolver: yupResolver(validationSchema),
+        defaultValues: formData
 
+    })
 
 
     useEffect(() => {
@@ -133,23 +128,14 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
 
 
 
-    const { register, handleSubmit, getValues, formState: { errors }, setValue } = useForm({
-        resolver: yupResolver(validationSchema),
-        defaultValues: formData
-
-    })
-
-
-
+   
 
     const goPrevious = () => {
         prevStep();
     }
 
     const handleCount = (count: number) => {
-
         setCount(count)
-
     }
 
 
@@ -158,8 +144,6 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
         // Capture the latest form values
         setLoader(true);
         let data = getValues();
-
-
         let isMofaicAttestedString = data.isMofaicAttested?.toString();
         let isMofaicAttestedBoolen: any = isMofaicAttestedString === 'true' ? true : isMofaicAttestedString === 'false' ? false : isMofaicAttestedString;
         // Update the formData state with the latest form values before saving
@@ -170,20 +154,16 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
         if (res) {
             setLoader(false);
             toast.success('Draft saved Successfully');
-            
+
         }
-
-
         updatedService = { ...updatedService, applicationId: res.id }
         dispath(setService(updatedService));
 
 
 
     };
-     
+
     const onSubmit = (data: any, event: any) => {
-
-
         const buttonClicked = event.nativeEvent.submitter.name
         const service = { ...serviceState, form: data } as ServiceForm;
 
@@ -199,12 +179,16 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
 
     const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
+        console.log(value);
         setFormData((prev) => ({
             ...prev,
             [name]: value === 'true' ? true : value === 'false' ? false : value,
         }));
     };
 
+ 
+
+   
 
     if (isLoading || isLoadingInfo) return <Spinner></Spinner>;
     if (isError || isErrorInfo) return <div>Error loading </div>;

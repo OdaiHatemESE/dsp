@@ -5,7 +5,8 @@ import { ServiceStep } from '@/config/service.model';
 interface StepperContextType {
   currentStepIndex: number;
   setCurrentStepIndex: (index: number) => void;
-  addDynamicStep: (step: ServiceStep) => void;
+  addDynamicStep: (step: ServiceStep, index?: number) => void;
+  removeStep: (index: number) => void;
   steps: ServiceStep[];
   getStepClass: (index: number) => string;
   nextStep: () => void;
@@ -23,17 +24,34 @@ interface StepperProviderProps {
 }
 
 export const StepperProvider: React.FC<StepperProviderProps> = ({ children, initialSteps, serviceId }) => {
- 
   
   // Initialize steps and current step index state
   const [steps, setSteps] = useState<ServiceStep[]>(initialSteps || []);
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
 
-  
+  // Function to add a dynamic step at a specific index (optional)
+  const addDynamicStep = (step: ServiceStep, index?: number) => {
+    setSteps((prevSteps) => {
+      const newSteps = [...prevSteps];
+      if (index !== undefined && index >= 0 && index <= newSteps.length) {
+        newSteps.splice(index, 0, step); // Insert at specific index
+      } else {
+        newSteps.push(step); // Add to the end if index is not provided or invalid
+      }
+      return newSteps;
+    });
+  };
 
-  // Function to add a dynamic step
-  const addDynamicStep = (step: ServiceStep) => {
-    setSteps((prevSteps) => [...prevSteps, step]);
+  // Function to remove a step at a specific index
+  const removeStep = (index: number) => {
+    setSteps((prevSteps) => prevSteps.filter((_, i) => i !== index));
+    
+    // Adjust the currentStepIndex if needed
+    setCurrentStepIndex((prevIndex) => {
+      if (index < prevIndex) return prevIndex - 1;
+      if (index === prevIndex && prevIndex === steps.length - 1) return prevIndex - 1;
+      return prevIndex;
+    });
   };
 
   // Function to get class for a step based on its index
@@ -67,6 +85,7 @@ export const StepperProvider: React.FC<StepperProviderProps> = ({ children, init
     currentStepIndex,
     setCurrentStepIndex,
     addDynamicStep,
+    removeStep,
     steps,
     getStepClass,
     nextStep,
