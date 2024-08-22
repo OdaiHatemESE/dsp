@@ -29,6 +29,7 @@ export interface AttachmentList {
   required?: boolean,
   attachmentType?: string;
   attachmentNote?: string,
+  multiFiles?:boolean;
   attachmentFile?: any[];
 
 }

@@ -11,6 +11,8 @@ import classNames from "classnames";
 import { toast } from "react-toastify";
 import { savaAsDraft } from "@/services/savaAsDraft";
 import { setService } from "@/store/slices/serviceSlice";
+import { ServiceConfig } from "@/config/services-config";
+import { promises } from "dns";
 
 
 
@@ -20,12 +22,13 @@ const UpdateInfoForm: React.FC = () => {
     ///// START Shared Section Between All Services  /////
     const { nextStep, prevStep, addDynamicStep, removeStep } = useStepper();
     const serviceState = useAppSelector((state) => state.service.service);
-    const emirateId = serviceState?.applicantInformation?.emiratesId
+    const service = ServiceConfig.find((service) => service.serviceId == serviceState?.serviceId)
+    let serviceAttachments = service?.attachments;
     const applicantId = serviceState?.applicantInformation?.id;
     let updatedService = { ...serviceState, form: serviceState?.form ?? {} as UpdateStudentForm }
     let { lookups, isLoading, isError } = useGeneralLookups();
     const nationality = lookups?.Nationality;
-    console.log('first', updatedService.applicationId);
+
     const dispath = useAppDispatch();
 
     const [applicationId, setApplicationId] = useState();
@@ -57,82 +60,27 @@ const UpdateInfoForm: React.FC = () => {
         prevStep();
     }
 
+    const requiredIfTrue = (field: string, message: string) =>
+        Yup.string().nullable().test(
+            `is-required-if-${field}-true`,
+            message,
+            function (value) {
+                return this.parent[field] ? !!value : true;
+            }
+        );
+
     const validationSchema = Yup.object().shape({
         changeName: Yup.bool(),
         changePlaceOfBirth: Yup.bool(),
         changeBirthOfDate: Yup.bool(),
         changeNationality: Yup.bool(),
-
-        nameAr: Yup.string().nullable().test(
-            'is-required-if-changeName-true',
-            'Name in Arabic is required when changeName is true',
-            function (value) {
-                if (this.parent.changeName === true) {
-                    return !!value; // Checks if value is not empty or null
-                }
-                return true; // No validation error if changeName is false
-            }
-        ),
-        nameEn: Yup.string().nullable().test(
-            'is-required-if-changeName-true',
-            'Name in English is required when changeName is true',
-            function (value) {
-                if (this.parent.changeName === true) {
-                    return !!value; // Checks if value is not empty or null
-                }
-                return true; // No validation error if changeName is false
-            }
-        ),
-        placeOfBirthAr: Yup.string().nullable().test(
-            'is-required-if-placeOfBirthAr-true',
-            'Name in Arabic is required when changeName is true',
-            function (value) {
-                if (this.parent.changePlaceOfBirth === true) {
-                    return !!value; // Checks if value is not empty or null
-                }
-                return true; // No validation error if changeName is false
-            }
-        ),
-        placeOfBirthEn: Yup.string().nullable().test(
-            'is-required-if-placeOfBirthEn-true',
-            'Name in English is required when changeName is true',
-            function (value) {
-                if (this.parent.changePlaceOfBirth === true) {
-                    return !!value; // Checks if value is not empty or null
-                }
-                return true; // No validation error if changeName is false
-            }
-        ),
-        birthOfDate: Yup.string().nullable().test(
-            'is-required-if-placeOfBirthEn-true',
-            'changeBirthOfDate changeName is true',
-            function (value) {
-                if (this.parent.changeBirthOfDate === true) {
-                    return !!value; // Checks if value is not empty or null
-                }
-                return true; // No validation error if changeName is false
-            }
-        ),
-        oldNationalityId: Yup.string().nullable().test(
-            'is-required-if-placeOfBirthAr-true',
-            'Name in Arabic is required when changeName is true',
-            function (value) {
-                if (this.parent.changeNationality === true) {
-                    return !!value; // Checks if value is not empty or null
-                }
-                return true; // No validation error if changeName is false
-            }
-        ),
-        newNationalityId: Yup.string().nullable().test(
-            'is-required-if-placeOfBirthEn-true',
-            'Name in English is required when changeName is true',
-            function (value) {
-                if (this.parent.changeNationality === true) {
-                    return !!value; // Checks if value is not empty or null
-                }
-                return true; // No validation error if changeName is false
-            }
-        ),
+        nameAr: requiredIfTrue('changeName', 'Name in Arabic is required when changeName is true'),
+        nameEn: requiredIfTrue('changeName', 'Name in English is required when changeName is true'),
+        placeOfBirthAr: requiredIfTrue('changePlaceOfBirth', 'Place of Birth in Arabic is required when changePlaceOfBirth is true'),
+        placeOfBirthEn: requiredIfTrue('changePlaceOfBirth', 'Place of Birth in English is required when changePlaceOfBirth is true'),
+        birthOfDate: requiredIfTrue('changeBirthOfDate', 'Date of Birth is required when changeBirthOfDate is true'),
+        oldNationalityId: requiredIfTrue('changeNationality', 'Old Nationality is required when changeNationality is true'),
+        newNationalityId: requiredIfTrue('changeNationality', 'New Nationality is required when changeNationality is true'),
     });
 
     const { register, handleSubmit, getValues, formState: { errors }, setValue } = useForm<UpdateStudentForm>({
@@ -141,56 +89,63 @@ const UpdateInfoForm: React.FC = () => {
 
     })
 
-    const onSubmit = (data: UpdateStudentForm, event: any) => {
-        const buttonClicked = event.nativeEvent.submitter.name
-        const service = { ...serviceState, form: data } as ServiceForm;
 
-        dispath(setService(service))
+    ///// Shared Section Between All Services END  /////
+    useEffect(() => {
+        
+        setValue('birthOfDate', formData.birthOfDate);
+        setValue('oldNationalityId', formData.oldNationalityId);
+        setValue('newNationalityId', formData.newNationalityId);
+    }, [formData.birthOfDate,formData.oldNationalityId,formData.newNationalityId,lookups])
+
+    const save = async (): Promise<boolean> => {
+        try {
+            let data = getValues();
+            if (applicationId != null) {
+                data = { ...data, applicationId: applicationId };
+            }
+            let savedStatus = false;
+            updatedService = { ...updatedService, form: data };
+
+            dispath(setService(updatedService));
+            setFormData(data);
+
+            const res = await savaAsDraft(updatedService, []);
+            if (res) {
+                setFormData((prev) => ({ ...prev, applicationId: res.id }));
+                setApplicationId(res.id);
+                updatedService = { ...updatedService, form: data, applicationId: res.id };
+                dispath(setService(updatedService));
+
+                toast.success('Draft saved Successfully:' + res.id);
+                savedStatus = true;
+            }
+            return savedStatus;
+        } catch (error) {
+            toast.error('Failed to save draft. Please try again.');
+            return false;
+        }
+    };
+
+    const onSubmit = async (data: UpdateStudentForm, event: any) => {
+        const buttonClicked = event.nativeEvent.submitter.name
+        // const service = { ...updatedService, form: data } as ServiceForm;
+
+        // dispath(setService(service))
         if (buttonClicked == 'next') {
-            save();
-            // nextStep();
+            const saved = await save();
+            if (saved) {
+                nextStep();
+            }
+
         } else {
             prevStep();
         }
 
     };
-    ///// Shared Section Between All Services END  /////
-    useEffect(() => {
-        setValue('birthOfDate', formData.birthOfDate);
-        setValue('oldNationalityId', formData.oldNationalityId);
-        setValue('newNationalityId', formData.newNationalityId);
- 
-  
-
-    }, [updatedService])
-
-
-    const save = async () => {
-        // Capture the latest form values
-        let data = getValues();
-        if (applicationId != null) {
-            data = { ...data, applicationId: applicationId }
-        }
-        updatedService = { ...updatedService, form: data }
-        setFormData(data);
-        const res = await savaAsDraft(updatedService, []);
-        if (res) {
-            setFormData((prev) => {
-                return { ...prev, applicationId: res.id }
-            })
-            setApplicationId(res.id);
-            updatedService = { ...updatedService, applicationId: res.id }
-            dispath(setService(updatedService));
-            toast.success('Draft saved Successfully:' + res.id);
-        }
-
-
-
-
-    };
     const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
-        console.log(value);
+
         setFormData((prev) => ({
             ...prev,
             [name]: value === 'true' ? true : value === 'false' ? false : value,

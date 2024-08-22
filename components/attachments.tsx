@@ -1,5 +1,5 @@
 'use client';
-import { ServiceConfig } from "@/config/services-config";
+import attachmentsDefinition, { ServiceConfig } from "@/config/services-config";
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler, Controller, Form } from "react-hook-form";
@@ -35,13 +35,43 @@ const Attachments: React.FC<Params> = ({ serviceId }) => {
     const service = ServiceConfig.find(service => service.serviceId === serviceId);
 
     let serviceState = useAppSelector((state) => state.service.service);
-    let attchmentList = serviceState?.attachment ?? [];
     console.clear();
-    console.log(attchmentList)
+    console.log(serviceState);
+
+    let attchmentList = serviceState?.attachment ?? []; /// Show Purpose only when have data.
+
+
     let attachments = service?.attachments ?? [];
-    // if(attchmentList.length>0){
-    //    attachments={...attachments,} 
-    // }
+    if (serviceId == 'update-student-info') {
+        const changeBirthOfDate = serviceState?.form.changeBirthOfDate;
+        const changePlaceOfBirth = serviceState?.form.changePlaceOfBirth;
+        const changeNationality = serviceState?.form.changeNationality;
+        const changeName = serviceState?.form.changeName;
+
+        let changeNameAttachments = [attachmentsDefinition.Passport.id, attachmentsDefinition.CourtCertificate.id,
+        attachmentsDefinition.SchoolCertificate.id, attachmentsDefinition.Other.id]
+
+        let changePlaceOfBirthAttachment = [attachmentsDefinition.Passport.id, attachmentsDefinition.NewPassport.id,
+        attachmentsDefinition.BirthCertificate.id, attachmentsDefinition.SchoolCertificate, attachmentsDefinition.Other.id]
+
+        let changeBirthOfDateAttachment = [attachmentsDefinition.Passport.id,
+        attachmentsDefinition.SchoolCertificate.id, attachmentsDefinition.Other.id]
+
+        let changeNationalitAttachment = [attachmentsDefinition.Passport.id, attachmentsDefinition.CourtCertificate.id,
+            attachmentsDefinition.SchoolCertificate.id, attachmentsDefinition.Other.id]
+    
+
+        if (changeName == "true") {
+            attachments = attachments.filter((elem) => {
+                return changeNameAttachments.indexOf(elem.attachmentId ?? '') > -1;
+            });
+        }
+        console.log('attachments', attachments)
+    }
+
+
+
+
     const dispatch = useAppDispatch();
 
     const fileValidationSchema = (required: boolean) =>
@@ -71,7 +101,7 @@ const Attachments: React.FC<Params> = ({ serviceId }) => {
 
 
     const onSubmit: SubmitHandler<FormValues> = async data => {
-        console.log(data);
+
         let form = new FormData();
         const attachmentList: AttachmentList[] = [];
         for (const key in data) {
@@ -91,7 +121,8 @@ const Attachments: React.FC<Params> = ({ serviceId }) => {
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)}>{ }
+            <input type="text" value={serviceState?.form.applicationId} />
             {attachments.map((attachment) => (
                 <div id={attachment.attachmentId} key={attachment.attachmentId}>
                     <div className="aegov-form-control mb-10">
@@ -108,7 +139,7 @@ const Attachments: React.FC<Params> = ({ serviceId }) => {
                                         type="file"
                                         onChange={(e) => field.onChange(e.target.files ? Array.from(e.target.files) : undefined)}
                                         className={errors[attachment.attachmentId] ? 'error' : ''}
-                                        multiple
+                                        multiple={attachment.multiFiles}
                                     />
                                 )}
                             />

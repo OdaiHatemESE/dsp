@@ -28,9 +28,9 @@ export default async function RootLayout({
     <html lang="en">
 
       <body className={inter.className}>
-   
+      <ToastContainer autoClose={4000}   />
         <StoreProvider>
-        <ToastContainer autoClose={4000}   />
+     
           <Header></Header>
           {children}
           <Footer />

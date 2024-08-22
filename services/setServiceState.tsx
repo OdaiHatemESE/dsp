@@ -8,7 +8,7 @@ import { ServiceConfig } from "@/config/services-config";
 import { AttachmentList, ServiceForm, StudyDetails } from "@/config/service.model";
 import { UserProfile } from "@/config/user.modal";
 import { setUser } from "@/store/slices/userSlice";
-import { getApplication, getIssuanceApplication } from "./getApplication";
+import { getApplication } from "./getApplication";
 import Spinner from "@/components/spinner";
 import { setApplicant } from "@/store/slices/applicantSlice";
 
@@ -34,7 +34,6 @@ const setServiceState = ({ serviceId, whoApply }: Params) => {
       const data = await getApplication(appId,serviceId);
 
       let updatedserviceState = serviceState ?? {} as ServiceForm;
-      console.log('attchment', data?.application.attachments);
       updatedserviceState = {
         id: service?.applicationDefinitionId ?? undefined,
         requestForId: data.application.requestForId,
@@ -76,7 +75,7 @@ const setServiceState = ({ serviceId, whoApply }: Params) => {
         currentStepIndex: 1,
         applicantInformation: mainUser ?? {} as UserProfile,
         form:  service?.form,
-        attachment: serviceState?.attachment,
+        attachment: [],
         applicationId: null,
 
       }

@@ -4,8 +4,7 @@ import fetchWithAuth from "./fetchWithAuth";
 import { ServiceConfig } from "@/config/services-config";
 export const savaAsDraft = async (serviceState: any, attachments: AttachmentList[]) => {
     const data = serviceState?.form;
-    console.clear();
-     console.log(data);
+  
     const form = new FormData();
     const serviceId = serviceState?.serviceId;
     const service = ServiceConfig.find((service) => service.serviceId == serviceId);
@@ -23,7 +22,6 @@ export const savaAsDraft = async (serviceState: any, attachments: AttachmentList
     if (attachments.length > 0) {
         attachments.forEach((attachment) => {
             attachment.attachmentFile?.forEach((file) => {
-                console.log(file);
                 form.append('other', file);
             })
         })
@@ -44,7 +42,6 @@ export const savaAsDraft = async (serviceState: any, attachments: AttachmentList
         }
 
         const result = await response.json();
-        // console.log('Data posted successfully:', result);
         return result;
 
     } catch (error) {

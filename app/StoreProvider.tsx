@@ -20,8 +20,8 @@ export default function StoreProvider({
 
     const { userInfo, isLoading, isError } = useGetUser();
     storeRef.current?.dispatch(setUser(userInfo))
-    if (isLoading) return <Spinner />
-    if (isError) return <div>{isError}</div>
+    // if (isLoading) return <Spinner />
+    // if (isError) return <div>{isError}</div>
   
     
     return <Provider store={storeRef.current}>{children}</Provider>

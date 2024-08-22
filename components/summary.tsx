@@ -29,7 +29,7 @@ const Summary: React.FC<params> = ({ serviceId }) => {
     const goPrevious = () => {
         prevStep();
     }
-    console.log(serviceState);
+  
 
     const lookupField = (key: string, value: any) => {
         switch (key) {

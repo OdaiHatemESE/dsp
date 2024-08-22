@@ -67,7 +67,6 @@ const getColumns = (id: string): TableConfig => {
 
 const ESEDataTable: React.FC<Params> = ({ data, pageSize, pageId }) => {
     const tableConfig = getColumns(pageId);
-    console.log(data);
     return (
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -94,7 +93,7 @@ const ESEDataTable: React.FC<Params> = ({ data, pageSize, pageId }) => {
                                         : app[col.selector]}
                                 </td>
                             ))}
-                            <td className="flex space-x-2">
+                            <td className="flex space-x-2">{getServiceUrl(app.applicationDefinitionId)}
                                 {tableConfig.actions.map((action) => (
                                     <a
                                         href={`${action.url}${getServiceUrl(app.applicationDefinitionId)}?requestId=${app.requestId}&mode=${action.mode}`}

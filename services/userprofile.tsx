@@ -36,7 +36,6 @@ export const useGetUser =  () => {
   }
 
   export const addSubProfile = async ({ applicant }: { applicant: UserProfile }): Promise<SubProfile> => {
-    console.log('Adding sub-profile for applicant:', applicant);
 
     try {
       const response = await fetchWithAuth('uap/api/Profile/UpdateSubProfile', {
@@ -54,7 +53,6 @@ export const useGetUser =  () => {
       }
 
       const res: SubProfile = await response.json();
-      console.log('Sub-profile added successfully:', res);
       return res;
     } catch (error) {
       console.error('Error adding sub-profile:', error);

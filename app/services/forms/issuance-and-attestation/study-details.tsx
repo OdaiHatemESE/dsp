@@ -179,7 +179,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
 
     const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
-        console.log(value);
+     
         setFormData((prev) => ({
             ...prev,
             [name]: value === 'true' ? true : value === 'false' ? false : value,
@@ -267,7 +267,6 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
                         <select id="academicYear" {...register('academicYearId',
                             {
                                 onChange(event) {
-                                    console.log('odai');
                                     const selectedValue = event.target.value;
                                     setFormData((prev) => {
                                         return { ...prev, academicYearId: selectedValue, AcademicYearName: selectedValue }
