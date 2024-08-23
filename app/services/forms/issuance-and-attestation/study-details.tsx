@@ -48,7 +48,7 @@ interface params {
 }
 
 const StudyDetails: React.FC<params> = ({ serviceId }) => {
-    
+
     const { nextStep, prevStep, addDynamicStep, removeStep } = useStepper();
     const router = useRouter();
     const serviceState = useAppSelector((state) => state.service.service); // Get Service State  
@@ -66,7 +66,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
     const schoolGrades = lookups?.Grade;
     const academicYearList = lookups?.AcademicYear;
     const moficCountriesList = lookups?.NationalityMofaic;
-   
+    const [applicationId, setApplicationId] = useState();
     const [formData, setFormData] = useState<StudyDetailsForm>({
         requestTypeId: updatedService.form.requestTypeId ?? 1,
         numberOfCopies: updatedService.form.numberOfCopies,
@@ -81,7 +81,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
         destinationCountryId: updatedService.form.destinationCountryId ?? null,
         sourceChannel: updatedService.form.sourceChannel,
         houseNumber: updatedService.form.houseNumber,
-        applicationId: updatedService.applicationId,
+        applicationId: updatedService.applicationId ?? applicationId,
         streetNumber: updatedService.form.streetNumber,
         isLastStep: updatedService.form.isLastStep,
         regionId: updatedService.form.regionId,
@@ -128,7 +128,7 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
 
 
 
-   
+
 
     const goPrevious = () => {
         prevStep();
@@ -140,37 +140,60 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
 
 
 
-    const save = async () => {
+    const save = async (): Promise<boolean> => {
         // Capture the latest form values
-        setLoader(true);
-        let data = getValues();
-        let isMofaicAttestedString = data.isMofaicAttested?.toString();
-        let isMofaicAttestedBoolen: any = isMofaicAttestedString === 'true' ? true : isMofaicAttestedString === 'false' ? false : isMofaicAttestedString;
-        // Update the formData state with the latest form values before saving
-        data = { ...data, numberOfCopies: count, isMofaicAttested: isMofaicAttestedBoolen };
-        let updatedService = { ...serviceState, form: data } as ServiceForm;
-        dispath(setService(updatedService));
-        const res = await savaAsDraft(updatedService, []);
-        if (res) {
-            setLoader(false);
-            toast.success('Draft saved Successfully');
+        try {
+            setLoader(true);
+            let data = getValues();
+            if (applicationId != null) {
+                data = { ...data, applicationId: applicationId };
+            }
+            let savedStatus = false;
 
+            let isMofaicAttestedString = data.isMofaicAttested?.toString();
+            let isMofaicAttestedBoolen: any = isMofaicAttestedString === 'true' ? true : isMofaicAttestedString === 'false' ? false : isMofaicAttestedString;
+            // Update the formData state with the latest form values before saving
+            data = { ...data, numberOfCopies: count, isMofaicAttested: isMofaicAttestedBoolen };
+
+            updatedService = { ...updatedService, form: data };
+            dispath(setService(updatedService));
+            setFormData(data);
+
+
+            const res = await savaAsDraft(updatedService, []);
+            if (res) {
+                setFormData((prev) => ({ ...prev, applicationId: res.id }));
+                setApplicationId(res.id);
+                data = { ...data, applicationId: res.id };
+                updatedService = { ...updatedService, form: data, applicationId: res.id };
+                dispath(setService(updatedService));
+
+                toast.success('Draft saved Successfully:' + res.id);
+                savedStatus = true;
+
+            }
+            return savedStatus;
         }
-        updatedService = { ...updatedService, applicationId: res.id }
-        dispath(setService(updatedService));
+        catch (error) {
+            toast.error('Failed to save draft. Please try again.');
+            return false;
+        }
 
 
 
     };
 
-    const onSubmit = (data: any, event: any) => {
+    const onSubmit = async (data: any, event: any) => {
         const buttonClicked = event.nativeEvent.submitter.name
-        const service = { ...serviceState, form: data } as ServiceForm;
+        // const service = { ...serviceState, form: data } as ServiceForm;
 
-        dispath(setService(service))
+        // dispath(setService(service))
         if (buttonClicked == 'next') {
-            save();
-            nextStep();
+            const saved = await save();
+            if (saved) {
+                nextStep();
+            }
+
         } else {
             prevStep();
         }
@@ -179,16 +202,16 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
 
     const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
-     
+
         setFormData((prev) => ({
             ...prev,
             [name]: value === 'true' ? true : value === 'false' ? false : value,
         }));
     };
 
- 
 
-   
+
+
 
     if (isLoading || isLoadingInfo) return <Spinner></Spinner>;
     if (isError || isErrorInfo) return <div>Error loading </div>;

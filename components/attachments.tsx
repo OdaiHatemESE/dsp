@@ -40,37 +40,63 @@ const Attachments: React.FC<Params> = ({ serviceId }) => {
 
     let attchmentList = serviceState?.attachment ?? []; /// Show Purpose only when have data.
 
-
     let attachments = service?.attachments ?? [];
-    if (serviceId == 'update-student-info') {
-        const changeBirthOfDate = serviceState?.form.changeBirthOfDate;
-        const changePlaceOfBirth = serviceState?.form.changePlaceOfBirth;
-        const changeNationality = serviceState?.form.changeNationality;
-        const changeName = serviceState?.form.changeName;
-
-        let changeNameAttachments = [attachmentsDefinition.Passport.id, attachmentsDefinition.CourtCertificate.id,
-        attachmentsDefinition.SchoolCertificate.id, attachmentsDefinition.Other.id]
-
-        let changePlaceOfBirthAttachment = [attachmentsDefinition.Passport.id, attachmentsDefinition.NewPassport.id,
-        attachmentsDefinition.BirthCertificate.id, attachmentsDefinition.SchoolCertificate, attachmentsDefinition.Other.id]
-
-        let changeBirthOfDateAttachment = [attachmentsDefinition.Passport.id,
-        attachmentsDefinition.SchoolCertificate.id, attachmentsDefinition.Other.id]
-
-        let changeNationalitAttachment = [attachmentsDefinition.Passport.id, attachmentsDefinition.CourtCertificate.id,
-            attachmentsDefinition.SchoolCertificate.id, attachmentsDefinition.Other.id]
+    const allAttachments = service?.attachments ?? [];
     
-
-        if (changeName == "true") {
-            attachments = attachments.filter((elem) => {
-                return changeNameAttachments.indexOf(elem.attachmentId ?? '') > -1;
-            });
-        }
-        console.log('attachments', attachments)
+    if (serviceId === 'update-student-info') {
+        const {
+            changeBirthOfDate,
+            changePlaceOfBirth,
+            changeNationality,
+            changeName
+        } = serviceState?.form || {};
+    
+        const attachmentMapping :any = {
+            changeName: [
+                attachmentsDefinition.Passport.id,
+                attachmentsDefinition.CourtCertificate.id,
+                attachmentsDefinition.SchoolCertificate.id,
+                attachmentsDefinition.Other.id
+            ],
+            changePlaceOfBirth: [
+                attachmentsDefinition.Passport.id,
+                attachmentsDefinition.NewPassport.id,
+                attachmentsDefinition.BirthCertificate.id,
+                attachmentsDefinition.SchoolCertificate.id,
+                attachmentsDefinition.Other.id
+            ],
+            changeBirthOfDate: [
+                attachmentsDefinition.Passport.id,
+                attachmentsDefinition.SchoolCertificate.id,
+                attachmentsDefinition.Other.id
+            ],
+            changeNationality: [
+                attachmentsDefinition.Passport.id,
+                attachmentsDefinition.CourtCertificate.id,
+                attachmentsDefinition.SchoolCertificate.id,
+                attachmentsDefinition.Other.id
+            ]
+        };
+    
+        let requiredAttachments = new Set();
+    
+        const updateAttachments = (condition:any, attachmentType:any) => {
+            if (condition === "true") {
+                attachmentMapping[attachmentType].forEach(id => requiredAttachments.add(id));
+            }
+        };
+    
+        updateAttachments(changeName, 'changeName');
+        updateAttachments(changePlaceOfBirth, 'changePlaceOfBirth');
+        updateAttachments(changeBirthOfDate, 'changeBirthOfDate');
+        updateAttachments(changeNationality, 'changeNationality');
+    
+        // Filter the attachments based on the accumulated required attachments
+        attachments = allAttachments.filter((elem) => requiredAttachments.has(elem.attachmentId ?? ''));
+    
+        console.log('attachments', attachments);
     }
-
-
-
+    
 
     const dispatch = useAppDispatch();
 
@@ -115,9 +141,12 @@ const Attachments: React.FC<Params> = ({ serviceId }) => {
 
 
         }
-        savaAsDraft(serviceState, attachmentList)
+        console.clear();
+        console.log(serviceState?.form.applicationId);
+        
+      savaAsDraft(serviceState, attachmentList)
 
-        nextStep();
+    //    nextStep();
     }
 
     return (

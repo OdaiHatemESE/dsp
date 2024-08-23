@@ -92,7 +92,6 @@ const UpdateInfoForm: React.FC = () => {
 
     ///// Shared Section Between All Services END  /////
     useEffect(() => {
-        
         setValue('birthOfDate', formData.birthOfDate);
         setValue('oldNationalityId', formData.oldNationalityId);
         setValue('newNationalityId', formData.newNationalityId);
@@ -114,6 +113,7 @@ const UpdateInfoForm: React.FC = () => {
             if (res) {
                 setFormData((prev) => ({ ...prev, applicationId: res.id }));
                 setApplicationId(res.id);
+                data = { ...data, applicationId: res.id };
                 updatedService = { ...updatedService, form: data, applicationId: res.id };
                 dispath(setService(updatedService));
 
