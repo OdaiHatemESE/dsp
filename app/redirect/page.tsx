@@ -9,7 +9,6 @@ export default function RedirectPage() {
   const LoginURL = process.env.LoginURL ?? 'https://uap-stg.ese.gov.ae/User/Login/ESE.EES';
   const dispatch = useDispatch();
   //const router = useRouter();
-
   useEffect(() => {
     const hash = window.location.hash;
     const token = hash && hash.startsWith('#token=') ? hash.substring(7) : null;

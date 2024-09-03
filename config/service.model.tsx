@@ -31,6 +31,7 @@ export interface AttachmentList {
   attachmentNote?: string,
   multiFiles?:boolean;
   attachmentFile?: any[];
+  attachmentFormName?:string
 
 }
 

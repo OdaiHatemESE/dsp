@@ -8,93 +8,100 @@ import ShippingAddress from "@/components/shipping-address";
 import issuanceSummary from "@/app/services/forms/issuance-and-attestation/issuance-summary";
 const attachmentsDefinition = {
    "NOCDocument": {
-     id: "1",
-     label: "NOCDocument",
-     label_ar: "NOC Document",
+      id: "1",
+      label: "NOCDocument",
+      label_ar: "NOC Document",
    },
    "Other": {
-     id: "2",
-     label: "Other",
-     label_ar: "اخرى",
+      id: "2",
+      label: "Other",
+      label_ar: "اخرى",
+      formName: 'other'
    },
    "AttestedEducation": {
-     id: "3",
-     label: "Attested Education",
-     label_ar: "الشهادة المصدقة",
+      id: "3",
+      label: "Attested Education",
+      label_ar: "الشهادة المصدقة",
+      formName: ''
    },
    "PersonalPhoto": {
-     id: "4",
-     label: "Personal Photo",
-     label_ar: "صورة شخصية",
+      id: "4",
+      label: "Personal Photo",
+      label_ar: "صورة شخصية",
    },
    "Residents": {
-     id: "5",
-     label: "Residents",
-     label_ar: "الاقامة",
+      id: "5",
+      label: "Residents",
+      label_ar: "الاقامة",
    },
    "FamilyBook": {
-     id: "6",
-     label: "Family Book",
-     label_ar: "خلاصة القيد",
+      id: "6",
+      label: "Family Book",
+      label_ar: "خلاصة القيد",
    },
    "Passport": {
-     id: "7",
-     label: "Passport",
-     label_ar: "جواز السفر",
+      id: "7",
+      label: "Passport",
+      label_ar: "جواز السفر",
+      formName: 'passport'
    },
    "CourtCertificate": {
-     id: "8",
-     label: "Court Certificate",
-     label_ar: "إشهاد المحكمة/خطاب القنصلية",
+      id: "8",
+      label: "Court Certificate",
+      label_ar: "إشهاد المحكمة/خطاب القنصلية",
+      formName: 'courtCertificate'
    },
    "BirthCertificate": {
-     id: "9",
-     label: "Birth Certificate",
-     label_ar: "شهادة الميلاد",
+      id: "9",
+      label: "Birth Certificate",
+      label_ar: "شهادة الميلاد",
+      formName: 'birthCertificate'
    },
    "SchoolCertificate": {
-     id: "10",
-     label: "School Certificate",
-     label_ar: "الشهادة الدراسية",
+      id: "10",
+      label: "School Certificate",
+      label_ar: "الشهادة الدراسية",
+      formName: 'schoolCertificate'
    },
    "EmirateIdPicture": {
-     id: "11",
-     label: "Emirate Id Picture",
-     label_ar: "صورة الهوية",
+      id: "11",
+      label: "Emirate Id Picture",
+      label_ar: "صورة الهوية",
    },
    "AgentDocument": {
-     id: "12",
-     label: "AgentDocument",
-     label_ar: "Agent Document",
+      id: "12",
+      label: "AgentDocument",
+      label_ar: "Agent Document",
    },
    "NewPassport": {
-     id: "13",
-     label: "NewPassport",
-     label_ar: "جواز السفر الجديد",
+      id: "13",
+      label: "NewPassport",
+      label_ar: "جواز السفر الجديد",
+      formName: 'newPassport'
    },
    "HoldsEmiratesNationality": {
-     id: "14",
-     label: "Holds Emirates Nationality",
-     label_ar: "Holds Emirates Nationality",
+      id: "14",
+      label: "Holds Emirates Nationality",
+      label_ar: "Holds Emirates Nationality",
    },
    "HealthStatusReport": {
-     id: "15",
-     label: "Health Status Report",
-     label_ar: "Health Status Report",
+      id: "15",
+      label: "Health Status Report",
+      label_ar: "Health Status Report",
    },
    "MotherFamilyBook": {
-     id: "16",
-     label: "Mother Family Book",
-     label_ar: "خلاصة قيد الأم",
+      id: "16",
+      label: "Mother Family Book",
+      label_ar: "خلاصة قيد الأم",
    },
    "HusbandRecordWife": {
-     id: "17",
-     label: "Husband Record Wife",
-     label_ar: "husband record wife",
+      id: "17",
+      label: "Husband Record Wife",
+      label_ar: "husband record wife",
    },
- };
- 
- export default attachmentsDefinition;
+};
+
+export default attachmentsDefinition;
 
 
 export const ServiceConfig: Service[] = [
@@ -139,12 +146,13 @@ export const ServiceConfig: Service[] = [
          {
             attachmentId: attachmentsDefinition.Other.id,
             attachmentType: 'pdf',
+            attachmentFormName:attachmentsDefinition.Other.formName,
             attachmentLabel: attachmentsDefinition.Other.label,
             attachmentFile: [],
             attachmentNote: 'Not Exceed 20 MB',
             required: false
          }
-         
+
       ],
       endPoints: {
          'saveAsDraft': 'certificates/v1/SaveAsDraft',
@@ -193,6 +201,7 @@ export const ServiceConfig: Service[] = [
             attachmentId: attachmentsDefinition.Passport.id,
             attachmentType: 'pdf',
             attachmentLabel: attachmentsDefinition.Passport.label,
+            attachmentFormName: attachmentsDefinition.Passport.formName,
             attachmentFile: [],
             attachmentNote: 'Not Exceed 20 MB',
             multiFiles: false,
@@ -202,6 +211,7 @@ export const ServiceConfig: Service[] = [
             attachmentId: attachmentsDefinition.NewPassport.id,
             attachmentType: 'pdf',
             attachmentLabel: attachmentsDefinition.NewPassport.label,
+            attachmentFormName: attachmentsDefinition.NewPassport.formName,
             attachmentFile: [],
             attachmentNote: 'Not Exceed 20 MB',
             multiFiles: false,
@@ -210,7 +220,8 @@ export const ServiceConfig: Service[] = [
          {
             attachmentId: attachmentsDefinition.CourtCertificate.id,
             attachmentType: 'pdf',
-            attachmentLabel:attachmentsDefinition.CourtCertificate.label,
+            attachmentLabel: attachmentsDefinition.CourtCertificate.label,
+            attachmentFormName: attachmentsDefinition.CourtCertificate.formName,
             attachmentFile: [],
             attachmentNote: 'Not Exceed 20 MB',
             multiFiles: false,
@@ -221,6 +232,7 @@ export const ServiceConfig: Service[] = [
             attachmentType: 'pdf',
             attachmentLabel: attachmentsDefinition.BirthCertificate.label,
             attachmentFile: [],
+            attachmentFormName: attachmentsDefinition.BirthCertificate.formName,
             attachmentNote: 'Not Exceed 20 MB',
             multiFiles: false,
             required: true
@@ -229,6 +241,7 @@ export const ServiceConfig: Service[] = [
             attachmentId: attachmentsDefinition.SchoolCertificate.id,
             attachmentType: 'pdf',
             attachmentLabel: attachmentsDefinition.SchoolCertificate.label,
+            attachmentFormName: attachmentsDefinition.SchoolCertificate.formName,
             attachmentFile: [],
             attachmentNote: 'Not Exceed 20 MB',
             multiFiles: false,
@@ -237,6 +250,7 @@ export const ServiceConfig: Service[] = [
          {
             attachmentId: attachmentsDefinition.Other.id,
             attachmentType: 'pdf',
+            attachmentFormName: attachmentsDefinition.Other.formName,
             attachmentLabel: attachmentsDefinition.Other.label,
             attachmentFile: [],
             attachmentNote: 'Not Exceed 20 MB',
@@ -253,4 +267,4 @@ export const ServiceConfig: Service[] = [
 ];
 
 
- 
+

@@ -4,7 +4,7 @@ import fetchWithAuth from "./fetchWithAuth";
 import { ServiceConfig } from "@/config/services-config";
 export const savaAsDraft = async (serviceState: any, attachments: AttachmentList[]) => {
     const data = serviceState?.form;
-  
+
     const form = new FormData();
     const serviceId = serviceState?.serviceId;
     const service = ServiceConfig.find((service) => service.serviceId == serviceId);
@@ -22,7 +22,7 @@ export const savaAsDraft = async (serviceState: any, attachments: AttachmentList
     if (attachments.length > 0) {
         attachments.forEach((attachment) => {
             attachment.attachmentFile?.forEach((file) => {
-                form.append('other', file);
+                form.append(attachment.attachmentFormName?.toString() || '', file);
             })
         })
     }
@@ -48,3 +48,15 @@ export const savaAsDraft = async (serviceState: any, attachments: AttachmentList
         console.error('Error saving draft:', error);
     }
 };
+
+
+export const deleteAttachments = async (attachmentId: any) : Promise<Boolean> => {
+    const response = await fetchWithAuth('certificates/v1/Attachments/Delete/' + attachmentId)
+    const res = await response.json();
+    if (!response.ok) {
+        throw new Error('Failed to delete attachment');
+    }
+
+    return res;
+
+}

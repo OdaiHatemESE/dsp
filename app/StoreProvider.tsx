@@ -7,6 +7,8 @@ import { getUser, useGetUser } from '@/services/userprofile'
 
 import { setUser } from '@/store/slices/userSlice'
 import Spinner from '@/components/spinner'
+import { useAppSelector } from '@/store/lib/hooks'
+
 export default function StoreProvider({
     children
 }: {
@@ -17,16 +19,18 @@ export default function StoreProvider({
         // Create the store instance the first time this renders
         storeRef.current = makeStore()
     }
+    console.clear();
 
+    
+  console.log(storeRef.current.getState().user);
     const { userInfo, isLoading, isError } = useGetUser();
+   
     storeRef.current?.dispatch(setUser(userInfo))
-    if (isLoading) return <Spinner />
+
+
+
+
+    if (isLoading) return <Spinner />;
+    if (!isLoading) return <Provider store={storeRef.current}>{children}</Provider>
     if (isError) return <div>{isError}</div>
-
-
-    return <Provider store={storeRef.current}>
-
- 
-        {children}
-    </Provider>
 }

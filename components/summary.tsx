@@ -18,7 +18,8 @@ const Summary: React.FC<params> = ({ serviceId }) => {
     const serviceState = useAppSelector((state) => state.service.service); // Get Service State  
     const service = ServiceConfig.find((service) => service.serviceId === serviceId);
     const studyDetails: StudyDetailsForm = serviceState?.form;
-
+    console.clear();
+    console.log(serviceState?.attachment);
     const { lookups, isLoading, isError } = useGeneralLookups();
 
     if (isLoading) return <Spinner></Spinner>;
@@ -29,7 +30,7 @@ const Summary: React.FC<params> = ({ serviceId }) => {
     const goPrevious = () => {
         prevStep();
     }
-  
+
 
     const lookupField = (key: string, value: any) => {
         switch (key) {
@@ -46,7 +47,7 @@ const Summary: React.FC<params> = ({ serviceId }) => {
 
     const handelPayment = async () => {
         const res = await getPaymentUrl(serviceState?.applicationId);
-        if(res){
+        if (res) {
 
             window.location.href = res.paymentUrl;
             return <Spinner />
@@ -106,43 +107,43 @@ const Summary: React.FC<params> = ({ serviceId }) => {
                     </div>
                 </div>
             </div>
-{serviceState?.attachment &&
-            
-            <div className="mt-10">
-                <hr className="mt-10" />
-                <h1 className="text-xl mb-5">Attachments</h1>
-                <div className="overflow-x-auto p-4 bg-gray-100">
-                    <div className=" mx-auto bg-white  rounded-lg p-6">
-                        <table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr>
-                                    <th className="border-b py-2 text-gray-700">File Name</th>
-                                    <th className="border-b py-2 text-gray-700">Download Link</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {serviceState?.attachment.map((file: any) => (
-                                    <tr key={file.id} className="border-b last:border-none">
-                                        <td className="py-2 font-bold text-gray-700">{file.attachmentName}</td>
-                                        <td className="py-2">
-                                            <a
-                                                href={file.attachmentUrl}
-                                                className="text-blue-600 hover:underline"
-                                                download
-                                            >
-                                                Download
-                                            </a>
-                                        </td>
+            {serviceState?.attachment &&
+
+                <div className="mt-10">
+                    <hr className="mt-10" />
+                    <h1 className="text-xl mb-5">Attachments</h1>
+                    <div className="overflow-x-auto p-4 bg-gray-100">
+                        <div className=" mx-auto bg-white  rounded-lg p-6">
+                            <table className="w-full text-left border-collapse">
+                                <thead>
+                                    <tr>
+                                        <th className="border-b py-2 text-gray-700">File Name</th>
+                                        <th className="border-b py-2 text-gray-700">Download Link</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {serviceState?.attachment.map((file: any) => (
+                                        <tr key={file.id} className="border-b last:border-none">
+                                            <td className="py-2 font-bold text-gray-700">{file.attachmentName}</td>
+                                            <td className="py-2">
+                                                <a
+                                                    href={file.attachmentUrl}
+                                                    className="text-blue-600 hover:underline"
+                                                    download
+                                                >
+                                                    Download
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
                     </div>
-
                 </div>
-            </div>
 
-}
+            }
             <hr className="mt-10" />
             <div className="mt-10">
                 <h1 className="text-xl mb-5">Payment Details</h1>

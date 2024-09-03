@@ -10,7 +10,7 @@ import { AttachmentList } from "@/config/service.model";
 import { arrayBuffer } from "stream/consumers";
 import { setService } from "@/store/slices/serviceSlice";
 import { useStepper } from "./steper/stepperProvider";
-import { savaAsDraft } from "@/services/savaAsDraft";
+import { deleteAttachments, savaAsDraft } from "@/services/savaAsDraft";
 
 interface Params {
     serviceId: string;
@@ -42,7 +42,7 @@ const Attachments: React.FC<Params> = ({ serviceId }) => {
 
     let attachments = service?.attachments ?? [];
     const allAttachments = service?.attachments ?? [];
-    
+
     if (serviceId === 'update-student-info') {
         const {
             changeBirthOfDate,
@@ -50,8 +50,8 @@ const Attachments: React.FC<Params> = ({ serviceId }) => {
             changeNationality,
             changeName
         } = serviceState?.form || {};
-    
-        const attachmentMapping :any = {
+
+        const attachmentMapping: any = {
             changeName: [
                 attachmentsDefinition.Passport.id,
                 attachmentsDefinition.CourtCertificate.id,
@@ -77,26 +77,28 @@ const Attachments: React.FC<Params> = ({ serviceId }) => {
                 attachmentsDefinition.Other.id
             ]
         };
-    
+
         let requiredAttachments = new Set();
-    
-        const updateAttachments = (condition:any, attachmentType:any) => {
+
+        const updateAttachments = (condition: any, attachmentType: any) => {
             if (condition === "true") {
                 attachmentMapping[attachmentType].forEach(id => requiredAttachments.add(id));
             }
         };
-    
+
         updateAttachments(changeName, 'changeName');
         updateAttachments(changePlaceOfBirth, 'changePlaceOfBirth');
         updateAttachments(changeBirthOfDate, 'changeBirthOfDate');
         updateAttachments(changeNationality, 'changeNationality');
-    
+
         // Filter the attachments based on the accumulated required attachments
         attachments = allAttachments.filter((elem) => requiredAttachments.has(elem.attachmentId ?? ''));
-    
+
         console.log('attachments', attachments);
     }
-    
+
+
+
 
     const dispatch = useAppDispatch();
 
@@ -110,6 +112,42 @@ const Attachments: React.FC<Params> = ({ serviceId }) => {
             })
             .nullable()
             .required(required ? "This field is required" : undefined);
+    console.clear();
+    console.log(serviceState?.attachment);
+
+
+    if (serviceState?.attachment.length > 0) {
+        const prevAttachments = serviceState?.attachment;
+
+
+        prevAttachments.forEach((attach: any) => {
+            // Find the corresponding attachment in the attachments array
+            let oldAttachment = attachments.find((item) => item.attachmentId == attach.documentDefinitionId);
+
+            if (oldAttachment) {
+                // Create a new object with updated values
+                let newAttachment = { ...oldAttachment, attachmentFile: attach, required: false };
+                console.log(newAttachment);
+
+                // Find the index of the object in the attachments array
+                let index = attachments.findIndex(obj => obj.attachmentId == attach.documentDefinitionId);
+                if (index !== -1) {
+                    // Replace the object at the found index
+                    attachments[index] = newAttachment;
+                    // Optionally push the updated object to the updatedList array
+
+                }
+            }
+        });
+
+        console.log('Updated Attachments:', attachments);
+
+
+
+
+    }
+
+
 
     const validationSchema = Yup.object().shape(
 
@@ -124,29 +162,30 @@ const Attachments: React.FC<Params> = ({ serviceId }) => {
 
     });
 
+    const handleDeleteAttachment = async (id: any) => {
+        const res = await deleteAttachments(id);
+        console.log(res);
+    }
 
 
     const onSubmit: SubmitHandler<FormValues> = async data => {
-
+        console.log(data);
         let form = new FormData();
         const attachmentList: AttachmentList[] = [];
         for (const key in data) {
             if (data.hasOwnProperty(key)) {
                 const value = data[key];
-                attachmentList.push({
-                    attachmentId: key,
-                    attachmentFile: value
-                });
+                let attachment = attachments.find((attch) => attch.attachmentId === key)
+                attachment = { ...attachment, attachmentId: key, attachmentFile: value }
+                attachmentList.push(attachment);
             };
 
 
         }
-        console.clear();
-        console.log(serviceState?.form.applicationId);
-        
-      savaAsDraft(serviceState, attachmentList)
 
-    //    nextStep();
+        console.log(attachmentList);
+        savaAsDraft(serviceState, attachmentList)
+        nextStep();
     }
 
     return (
@@ -174,22 +213,32 @@ const Attachments: React.FC<Params> = ({ serviceId }) => {
                             />
 
                         </div>
+
+                        {errors[attachment.attachmentId] && <p><span className="error-message">{errors[attachment.attachmentId]?.message}</span></p>}
+
                         {serviceState?.attachment &&
                             <div>
 
                                 {serviceState?.attachment.map((file) => {
-                                    return <div key={file.id} className="flex items-center mb-4">
-                                        <div className="w-1/2 font-bold text-gray-700">{file.id}
-                                            <a href={file.attachmentUrl}>{file.attachmentName}</a></div>
-                                    </div>
+                                    console.log(file.documentDefinitionId.toString(), (attachment.attachmentId || ''))
+                                    return file.documentDefinitionId.toString() === (attachment.attachmentId || '') ? (
+                                        <div key={file.id} className="flex items-center mt-5 mb-5">
+                                            <div className="w-1/2 font-bold text-gray-700">
+                                                <a href={file.attachmentUrl} className="ml-2">{file.attachmentName}</a>
 
+                                                <a href="javascript:void(0)" onClick={(e) => handleDeleteAttachment(file.id)}>Delete</a>
+                                            </div>
+                                        </div>
+                                    ) : null;
                                 })}
+                                <hr />
                             </div>
                         }
-                        {errors[attachment.attachmentId] && <p><span className="error-message">{errors[attachment.attachmentId]?.message}</span></p>}
                     </div>
                 </div>
+
             ))}
+
             <div className="w-full actions mt-10 flex flex-row justify-between flex-wrap">
                 <button className="aegov-btn btn-lg" type="button" onClick={goPrevious}>
                     <svg

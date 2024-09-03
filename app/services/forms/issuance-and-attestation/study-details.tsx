@@ -92,39 +92,13 @@ const StudyDetails: React.FC<params> = ({ serviceId }) => {
         applicantId: updatedService.form.applicantId ?? applicantId,
     });
 
-    const { register, handleSubmit, getValues, formState: { errors }, setValue } = useForm({
+    const { register, handleSubmit, getValues, formState: { errors }, setValue } = useForm<any>({
         resolver: yupResolver(validationSchema),
         defaultValues: formData
 
     })
 
 
-    useEffect(() => {
-        formData.numberOfCopies = count;
-        if (studentInfo && lookups) {
-            // Handle student information if necessary
-            if (studentInfo.studentNumber) {
-                let updatedFormData: StudyDetailsForm = {
-                    ...formData,
-                    sisNumber: formData.sisNumber ?? studentInfo.studentNumber,
-                    emirateSchoolId: formData.emirateSchoolId ?? formData.emirateId ?? studentInfo.emirateId,
-                    schoolName: formData.schoolName ?? studentInfo.schoolNameEn,
-                    gradeId: formData.gradeId ?? studentInfo.gradeId
-                };
-
-                setCount(updatedFormData.numberOfCopies ?? 0)
-
-                setValue('sisNumber', updatedFormData.sisNumber);
-                setValue('emirateSchoolId', updatedFormData.emirateSchoolId);
-                setValue('schoolName', updatedFormData.schoolName);
-                setValue('gradeId', updatedFormData.gradeId);
-
-                // Dispatch the updated service to the store
-                const updatedService = { ...serviceState, form: updatedFormData } as ServiceForm;
-                dispath(setService(updatedService));
-            }
-        }
-    }, [studentInfo, lookups, count]);
 
 
 
