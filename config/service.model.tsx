@@ -176,6 +176,23 @@ export interface UpdateStudentForm {
   applicationId:any
 }
 
+
+
+export interface LeavingStuidesForm{
+  EmirateId: number;
+  AcademicYearId: number;
+  GradeId: number;
+  StudyPeriodId: number;
+  SISNumber: string;
+  Comment: string;
+  SchoolName: string;
+  RequestForId: number;
+  ApplicantId: number;
+  applicationId: string | null;
+  EmiratesIDNumber: string;
+}
+
+
 export interface StudenInfoFromManhal {
   response: {
     emirateId: string

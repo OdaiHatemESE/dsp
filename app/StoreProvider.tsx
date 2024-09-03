@@ -19,7 +19,7 @@ export default function StoreProvider({
         // Create the store instance the first time this renders
         storeRef.current = makeStore()
     }
-    console.clear();
+ 
 
     
   console.log(storeRef.current.getState().user);

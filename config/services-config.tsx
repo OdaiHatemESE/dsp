@@ -1,11 +1,12 @@
 import ApplicantInformation from "@/components/applicant-information/applicant-information";
-import { AttachmentList, Service, StudyDetailsForm, UpdateStudentForm } from "./service.model";
+import { AttachmentList, LeavingStuidesForm, Service, StudyDetailsForm, UpdateStudentForm } from "./service.model";
 import StudyDetails from "@/app/services/forms/issuance-and-attestation/study-details";
 import Attachments from "@/components/attachments";
 import Summary from "@/components/summary";
 import UpdateInfoForm from "@/app/services/forms/update-student-info/update-info-form";
 import ShippingAddress from "@/components/shipping-address";
 import issuanceSummary from "@/app/services/forms/issuance-and-attestation/issuance-summary";
+import LeavingStudies from "@/app/services/forms/leaving-studies/leaving-studies-form";
 const attachmentsDefinition = {
    "NOCDocument": {
       id: "1",
@@ -261,6 +262,60 @@ export const ServiceConfig: Service[] = [
       endPoints: {
          saveAsDraft: 'certificates/v1/CreateStudentDataModify',
          getApplication: 'certificates/v1/GetModifiedStudentData?Id='
+      }
+   },
+   {
+      id: '399-02-001-002',
+      serviceId: 'leaving-studies',
+      applicationDefinitionId: 4,
+      serviceName: 'Request To Issue A Certificate Of Leaving Studies In A Public School',
+      serviceNameArabic: 'طلب إصدار شهادة ترك دراسة في المدرسة الحكومية',
+      urlAliasName: 'leaving-studies',
+      currentStepIndex: 0,
+      steps: [
+         {
+            index: 0,
+            title: 'Applicant Information',
+            status: 'step-current',
+            component: ApplicantInformation
+         },
+         {
+            index: 1,
+            title: 'study-details',
+            status: 'step-upcoming',
+            component: LeavingStudies
+         },
+         {
+            index: 2,
+            title: 'attachments',
+            status: 'step-upcoming',
+            component: Attachments
+         },
+
+         {
+            index: 3,
+            title: 'summary',
+            status: 'step-upcoming',
+            component: Summary
+         }
+      ],
+      form: {} as LeavingStuidesForm,
+      summary: issuanceSummary,
+      attachments: [
+         {
+            attachmentId: attachmentsDefinition.Other.id,
+            attachmentType: 'pdf',
+            attachmentFormName:attachmentsDefinition.Other.formName,
+            attachmentLabel: attachmentsDefinition.Other.label,
+            attachmentFile: [],
+            attachmentNote: 'Not Exceed 20 MB',
+            required: false
+         }
+
+      ],
+      endPoints: {
+         'saveAsDraft': 'certificates/v1/LeavingStudyAsDraft',
+         'getApplication': 'certificates/v1/GetLeavingStudy?Id='
       }
    },
 

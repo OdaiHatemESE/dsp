@@ -35,8 +35,8 @@ const Attachments: React.FC<Params> = ({ serviceId }) => {
     const service = ServiceConfig.find(service => service.serviceId === serviceId);
 
     let serviceState = useAppSelector((state) => state.service.service);
-    console.clear();
-    console.log(serviceState);
+
+    
 
     let attchmentList = serviceState?.attachment ?? []; /// Show Purpose only when have data.
 
@@ -112,8 +112,8 @@ const Attachments: React.FC<Params> = ({ serviceId }) => {
             })
             .nullable()
             .required(required ? "This field is required" : undefined);
-    console.clear();
-    console.log(serviceState?.attachment);
+
+    
 
 
     if (serviceState?.attachment.length > 0) {

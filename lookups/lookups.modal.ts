@@ -16,7 +16,7 @@ export interface generalLookups {
     Relationship: [],
     RequestFor: [],
     RequestType: [],
-    StudyPeriod: [],
+    StudyPeriod: StudyPeriod[],
     UserType: []
 }
 
@@ -49,6 +49,17 @@ interface Nationality {
     isoCode3: string;
     modifiedBy: string | null;
     modifiedOn: string | null; // ISO 8601 date string or null
+    titleAr: string;
+    titleEn: string;
+}
+
+interface StudyPeriod{
+    createdBy: string;
+    createdOn: string; // Using string to represent ISO date format
+    id: number;
+    isActive: boolean;
+    modifiedBy: string | null;
+    modifiedOn: string | null;
     titleAr: string;
     titleEn: string;
 }

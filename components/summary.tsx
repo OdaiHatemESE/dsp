@@ -18,8 +18,7 @@ const Summary: React.FC<params> = ({ serviceId }) => {
     const serviceState = useAppSelector((state) => state.service.service); // Get Service State  
     const service = ServiceConfig.find((service) => service.serviceId === serviceId);
     const studyDetails: StudyDetailsForm = serviceState?.form;
-    console.clear();
-    console.log(serviceState?.attachment);
+   
     const { lookups, isLoading, isError } = useGeneralLookups();
 
     if (isLoading) return <Spinner></Spinner>;
