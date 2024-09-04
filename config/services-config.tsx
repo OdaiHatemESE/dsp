@@ -7,6 +7,7 @@ import UpdateInfoForm from "@/app/services/forms/update-student-info/update-info
 import ShippingAddress from "@/components/shipping-address";
 import issuanceSummary from "@/app/services/forms/issuance-and-attestation/issuance-summary";
 import LeavingStudies from "@/app/services/forms/leaving-studies/leaving-studies-form";
+import AcademicSequenceCertificateForm from "@/app/services/forms/academic-sequence-certificate/academic-sequence-certificate-form";
 const attachmentsDefinition = {
    "NOCDocument": {
       id: "1",
@@ -318,7 +319,60 @@ export const ServiceConfig: Service[] = [
          'getApplication': 'certificates/v1/GetLeavingStudy?Id='
       }
    },
+   {
+      id: '399-02-001-004',
+      serviceId: 'academic-sequence-certificate',
+      applicationDefinitionId: 4,
+      serviceName: 'Request for Issuance of a To Whom It May Concern Certificate - Students Academic Sequence in Governmental School',
+      serviceNameArabic: 'طلب إصدار شهادة لمن يهمه الامر- التسلسل الدراسي للطالب في المدرسة الحكومية​',
+      urlAliasName: 'academic-sequence-certificate',
+      currentStepIndex: 0,
+      steps: [
+         {
+            index: 0,
+            title: 'Applicant Information',
+            status: 'step-current',
+            component: ApplicantInformation
+         },
+         {
+            index: 1,
+            title: 'study-details',
+            status: 'step-upcoming',
+            component: AcademicSequenceCertificateForm
+         },
+         {
+            index: 2,
+            title: 'attachments',
+            status: 'step-upcoming',
+            component: Attachments
+         },
 
+         {
+            index: 3,
+            title: 'summary',
+            status: 'step-upcoming',
+            component: Summary
+         }
+      ],
+      form: {} as LeavingStuidesForm,
+      summary: issuanceSummary,
+      attachments: [
+         {
+            attachmentId: attachmentsDefinition.Other.id,
+            attachmentType: 'pdf',
+            attachmentFormName:attachmentsDefinition.Other.formName,
+            attachmentLabel: attachmentsDefinition.Other.label,
+            attachmentFile: [],
+            attachmentNote: 'Not Exceed 20 MB',
+            required: false
+         }
+
+      ],
+      endPoints: {
+         'saveAsDraft': 'certificates/v1/LeavingStudyAsDraft',
+         'getApplication': 'certificates/v1/GetLeavingStudy?Id='
+      }
+   },
 ];
 
 
