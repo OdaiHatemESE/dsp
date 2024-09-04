@@ -1,13 +1,13 @@
 import ApplicantInformation from "@/components/applicant-information/applicant-information";
 import { AttachmentList, LeavingStuidesForm, Service, StudyDetailsForm, UpdateStudentForm } from "./service.model";
-import StudyDetails from "@/app/services/forms/issuance-and-attestation/study-details";
+import StudyDetails from "@/app/dsp/services/forms/issuance-and-attestation/study-details";
 import Attachments from "@/components/attachments";
 import Summary from "@/components/summary";
-import UpdateInfoForm from "@/app/services/forms/update-student-info/update-info-form";
+import UpdateInfoForm from "@/app/dsp/services/forms/update-student-info/update-info-form";
 import ShippingAddress from "@/components/shipping-address";
-import issuanceSummary from "@/app/services/forms/issuance-and-attestation/issuance-summary";
-import LeavingStudies from "@/app/services/forms/leaving-studies/leaving-studies-form";
-import AcademicSequenceCertificateForm from "@/app/services/forms/academic-sequence-certificate/academic-sequence-certificate-form";
+import issuanceSummary from "@/app/dsp/services/forms/issuance-and-attestation/issuance-summary";
+import LeavingStudies from "@/app/dsp/services/forms/leaving-studies/leaving-studies-form";
+import AcademicSequenceCertificateForm from "@/app/dsp/services/forms/academic-sequence-certificate/academic-sequence-certificate-form";
 const attachmentsDefinition = {
    "NOCDocument": {
       id: "1",
