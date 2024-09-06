@@ -16,7 +16,7 @@ export default function RedirectPage() {
   
     if (token) {
       dispatch(setToken(token));
-       window.location.href = '/';
+       window.location.href = '/parent';
       //   router.replace('/'); // Redirect to the home page after setting the token
     } else {
   

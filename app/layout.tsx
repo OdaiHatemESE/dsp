@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/header";
+ 
 
 import StoreProvider from "./StoreProvider";
-import Breadcrumbs from "@/components/breadcrumb";
+ 
 
 const inter = Inter({ subsets: ["latin"] });
 import { ToastContainer, toast } from 'react-toastify';
@@ -25,9 +25,9 @@ export default async function RootLayout({
 
 
   return (
-    <html lang="en">
+    <html lang="en" dir="rtl">
 
-      <body className={inter.className}>
+      <body >
       <ToastContainer autoClose={4000}   />
         <StoreProvider>
      

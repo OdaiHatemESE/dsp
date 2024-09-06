@@ -19,12 +19,12 @@ export default function StoreProvider({
         // Create the store instance the first time this renders
         storeRef.current = makeStore()
     }
- 
 
-    
-  console.log(storeRef.current.getState().user);
+
+
+    console.log(storeRef.current.getState().user);
     const { userInfo, isLoading, isError } = useGetUser();
-   
+
     storeRef.current?.dispatch(setUser(userInfo))
 
 
