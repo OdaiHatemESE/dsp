@@ -6,21 +6,22 @@ import { useDispatch } from 'react-redux';
 import { setToken } from '@/store/slices/authSlice';
 
 export default function RedirectPage() {
-  const LoginURL = process.env.LoginURL ?? 'https://uap-stg.ese.gov.ae/User/Login/ESE.EES';
+  const LoginURL = process.env.LoginURL;
+  const PortalURL = process.env.PORTAL_URL;
   const dispatch = useDispatch();
-  //const router = useRouter();
+
   useEffect(() => {
     const hash = window.location.hash;
     const token = hash && hash.startsWith('#token=') ? hash.substring(7) : null;
-   
-  
+
+
     if (token) {
       dispatch(setToken(token));
-       window.location.href = '/parent';
+      window.location.href = '/parent';
       //   router.replace('/'); // Redirect to the home page after setting the token
     } else {
-  
-       window.location.href = LoginURL + '?RedirectUri=http://localhost:4200/redirect'
+
+      window.location.href = LoginURL + '?RedirectUri=' + PortalURL + '/redirect'
       // router.replace('/login'); // Redirect to login if no token is found
     }
   }, [dispatch]);
