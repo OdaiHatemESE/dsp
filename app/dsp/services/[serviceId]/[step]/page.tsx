@@ -24,7 +24,7 @@ const DynamicPage: React.FC<Params> = ({ params }) => {
       case 'attachments':
         return <Attachments  serviceId={serviceId}  />;
       case 'summary':
-        return <Summary />;
+        return <Summary  serviceId={serviceId}  />;
       default:
         return <div>Default Component</div>;
     }

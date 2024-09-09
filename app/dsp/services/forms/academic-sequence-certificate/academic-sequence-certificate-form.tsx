@@ -36,7 +36,7 @@ const AcademicSequenceCertificateForm = () => {
         name: 'rows',
     });
 
-    const onSubmit = (data) => {
+    const onSubmit = (data:any) => {
         console.log('Form Data:', data);
         alert('done')
     };
