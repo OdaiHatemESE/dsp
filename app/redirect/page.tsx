@@ -7,7 +7,7 @@ import { setToken } from '@/store/slices/authSlice';
 
 export default function RedirectPage() {
   const LoginURL = process.env.LoginURL;
-  const PortalURL = process.env.PORTAL_URL;
+  const PortalURL = process.env.PORTALURL;
   const dispatch = useDispatch();
 
   useEffect(() => {
