@@ -1,21 +1,57 @@
 'use client';
 import StudentRecord from "@/components/parents/student.modal";
-import { useAppSelector } from "@/store/lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/lib/hooks";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef } from "react";
+
+import Spinner from "@/components/spinner";
+import { setStudentsList } from "@/store/slices/parent/studentsSlick";
+import useGeneratePDF from "@/services/parent/useGeneratePDF";
 
 export default function Page(props: any) {
-  console.log(props.params.studentId);
+
   const studentId = props.params.studentId;
   const students = useAppSelector((state) => state.student.student);
   console.log(students);
   const selectedStudent = students?.find((student) => student.StudentNumber == studentId)
-  console.log(selectedStudent);
   const [studentInfo, setStudentInfo] = useState<StudentRecord>(selectedStudent ?? {} as StudentRecord);
+  const [confirm, setConfirm] = useState<boolean>(false);
+  const confirmInputRef = useRef<HTMLInputElement>(null); // Create a ref for the confirm checkbox
+  const [highlightConfirm, setHighlightConfirm] = useState(false); // State to toggle highlight
+  const [loading, setLoading] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
+
+
+  const handleSign = () => {
+    if (!confirm) {
+      // Scroll to the confirm checkbox and highlight it
+      if (confirmInputRef.current) {
+        confirmInputRef.current.scrollIntoView({ behavior: 'smooth' });
+        setHighlightConfirm(true);
+      }
+    } else {
+      // Proceed with signing logic
+      console.log("Form is confirmed and signed.");
+
+      useGeneratePDF(selectedStudent, '/Methaq.pdf', '/Alexandria-font.ttf');
+
+      let updatedStudent = { ...selectedStudent, isSigned: "Yes" }
+      let updatedStudents: any = students?.map((student) =>
+        student.StudentNumber == studentId ? updatedStudent : student
+      );
+      dispatch(setStudentsList(updatedStudents))
+
+
+    }
+
+
+  }
+
 
   return (
     <>
+      {loading && <Spinner />}
 
       <div className="container   p-8 bg-white  ">
 
@@ -47,7 +83,7 @@ export default function Page(props: any) {
             </div>
             <div className="mb-4 md:flex md:items-baseline">
               <label htmlFor="school-address" className="block mb-2">عنوانها:</label>
-              <input  value={studentInfo.SchoolAddress}  type="text" id="school-address" name="school-address" className="w-full p-2 border border-gray-300 rounded" placeholder="..........................................................." />
+              <input value={studentInfo.SchoolAddress} type="text" id="school-address" name="school-address" className="w-full p-2 border border-gray-300 rounded" placeholder="..........................................................." />
             </div>
             <div className="mb-4 md:flex md:items-baseline">
               <label htmlFor="school-contact" className="block mb-2">رقم التواصل:</label>
@@ -63,7 +99,7 @@ export default function Page(props: any) {
                 <input
                   type="text"
                   id="guardian-name"
-                  value={studentInfo.ParentName} 
+                  value={studentInfo.ParentName}
                   name="guardian-name"
                   className="w-full p-2 border border-gray-300 rounded"
                   placeholder="..........................................................."
@@ -74,7 +110,7 @@ export default function Page(props: any) {
                 <label htmlFor="emirates-id-1" className="block mb-2">رقم الهوية الإماراتية:  </label>
                 <input
                   type="text"
-                  value={studentInfo.ParentEmiratesID} 
+                  value={studentInfo.ParentEmiratesID}
                   id="emirates-id-1"
                   name="emirates-id-1"
                   className="w-full p-2 border border-gray-300 rounded"
@@ -86,7 +122,7 @@ export default function Page(props: any) {
                 <input
                   type="text"
                   id="student-name"
-                  value={studentInfo.Name} 
+                  value={studentInfo.Name}
                   name="student-name"
                   className="w-full p-2 border border-gray-300 rounded"
                   placeholder="..........................................................."
@@ -98,7 +134,7 @@ export default function Page(props: any) {
                 <input
                   type="text"
                   id="emirates-id-2"
-                  value={studentInfo.StudentEmiratesID} 
+                  value={studentInfo.StudentEmiratesID}
                   name="emirates-id-2"
                   className="w-full p-2 border border-gray-300 rounded"
                   placeholder="..........................................................."
@@ -109,7 +145,7 @@ export default function Page(props: any) {
                 <input
                   type="text"
                   id="address"
-                  value={studentInfo.Address} 
+                  value={studentInfo.Address}
                   name="address"
                   className="w-full p-2 border border-gray-300 rounded"
                   placeholder="..........................................................."
@@ -120,7 +156,7 @@ export default function Page(props: any) {
                 <input
                   type="text"
                   id="guardian-contact"
-                  value={studentInfo.Phone} 
+                  value={studentInfo.Phone}
                   name="guardian-contact"
                   className="w-full p-2 border border-gray-300 rounded"
                   placeholder="..........................................................."
@@ -248,7 +284,17 @@ export default function Page(props: any) {
             </div>
           </div>
         </div>
-        <div className="flex"><input type="checkbox" name="confirm" required />
+        <div className={`flex ${highlightConfirm ? 'aegov-alert alert-error mb-5' : ''}`}>
+
+          <input
+            type="checkbox"
+            name="confirmInput"
+            ref={confirmInputRef} // Attach the ref to the checkbox
+            required
+            onClick={() => { setConfirm(!confirm); setHighlightConfirm(!highlightConfirm) }}
+            checked={confirm}
+            className='mr-2' // Add highlight class if needed
+          />
 
           <p className="mr-3">
             أقر أنا - الطرف الثاني - أنني قرأت بنود ومحتويات ميثاق الشراكة بين ولي الأمر والطالب والمدرسة ذات الصلة، وأو
@@ -266,7 +312,7 @@ export default function Page(props: any) {
               <label className="mb-2">اسم مدير المدرسة:</label>
               <input
                 type="text"
-                value={studentInfo.PrincipalName} 
+                value={studentInfo.PrincipalName}
                 className="w-full p-2 border border-gray-300 rounded mb-2"
                 placeholder="..................................................."
               />
@@ -281,7 +327,7 @@ export default function Page(props: any) {
               <label className="mb-2">اسم ولي أمر الطالب/الوصي:</label>
               <input
                 type="text"
-                value={studentInfo.ParentName} 
+                value={studentInfo.ParentName}
                 className="w-full p-2 border border-gray-300 rounded mb-2"
                 placeholder="..................................................."
               />
@@ -304,20 +350,22 @@ export default function Page(props: any) {
               <label className="mb-2">رقم الهوية الإماراتية:</label>
               <input
                 type="text"
-                value={studentInfo.ParentEmiratesID} 
+                value={studentInfo.ParentEmiratesID}
                 className="w-full p-2 border border-gray-300 rounded"
                 placeholder="..................................................."
               />
             </div>
           </div>
         </div>
-        <div className="fixed bottom-0 left-0 right-0 bg-[#ccc] border-t border-gray-200 p-4 ">
+        <div className="fixed bottom-0 left-0 right-0 bg-[#ebebebe3] shadow-[0_2px_-3px_-10px_5px_rgba(100,100,100,0.22)] p-4 ">
           <div className="container flex justify-between">
-            <button className="bg-blue-500 text-white font-bold py-2 px-4 rounded">Action 1</button>
-            <Link href={'/parent'} className="bg-green-500 text-white font-bold py-2 px-4 rounded">Back</Link>
+
+            <button onClick={handleSign} className="bg-blue-500 w-[150px] text-white font-bold py-4 px-4 rounded m-2  ">توقيع</button>
+            <Link href={'/parent'} className="bg-green-500 w-[150px] text-center text-white font-bold py-4 px-4 rounded m-2">الرجوع</Link>
           </div>
         </div>
       </div>
     </>
   );
 }
+

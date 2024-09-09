@@ -4,6 +4,7 @@ import StudentRecord from './student.modal';
 import { useAppDispatch, useAppSelector } from '@/store/lib/hooks';
 import { setStudentsList } from '@/store/slices/parent/studentsSlick';
 import Link from 'next/link';
+import useGeneratePDF from '@/services/parent/useGeneratePDF';
 
 const StudentGrid = () => {
   const studentList = useAppSelector((state) => state.student.student)
@@ -31,10 +32,13 @@ const StudentGrid = () => {
                 <td className="border border-gray-200 px-4 py-2 hidden md:table-cell">{student.StudentNumber}</td>
                 <td className="border border-gray-200 px-4 py-2">{student.Name}</td>
                 <td className="border border-gray-200 px-4 py-2">
-                  {student.isSigned == 'Yes' ? 'Yes' : 'No'}
+                  {student.isSigned == 'Yes' ? 'نعم' : 'لا'}
                 </td>
                 <td className="border border-gray-200 px-4 py-2">
-                  <Link href={`/parent/sign-conduct/${student.StudentNumber}`} className="text-blue-500 hover:underline">Sign</Link>
+                  {student.isSigned != 'Yes' &&
+                    <Link href={`/parent/sign-conduct/${student.StudentNumber}`} className="aegov-btn btn-outline">Sign</Link>}
+                  {student.isSigned == 'Yes' &&
+                    <button type='button' className='aegov-btn btn-outline' onClick={() => useGeneratePDF(student, '/Methaq.pdf', '/Alexandria-font.ttf')} >Download</button>}
                 </td>
               </tr>
             ))}
