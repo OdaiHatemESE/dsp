@@ -20,7 +20,7 @@ export default function RedirectPage() {
       window.location.href = '/parent';
       //   router.replace('/'); // Redirect to the home page after setting the token
     } else {
-
+      alert(PortalURL);
       window.location.href = LoginURL + '?RedirectUri=' + PortalURL + '/redirect'
       // router.replace('/login'); // Redirect to login if no token is found
     }

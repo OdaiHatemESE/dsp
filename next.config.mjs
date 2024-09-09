@@ -12,6 +12,7 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL, // Example environment variable
     LoginURL: process.env.LoginURL,
+    PORTALURL:process.env.PORTALURL
   },
 };
 
