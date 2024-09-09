@@ -8,7 +8,8 @@ export async function middleware(req: NextRequest) {
   let token = req.cookies.get('authToken')?.value ?? '';
 
   const LoginURL = process.env.NEXT_PUBLIC_LOGIN_URL ?? '';
-
+  
+  console.log(LoginURL);
   // Check if token exists
   if (token) {
     try {
@@ -20,6 +21,7 @@ export async function middleware(req: NextRequest) {
       // Check if the token is expired
       if (decodedToken.exp < currentTime) {
         // Log the expired token
+      
       
 
         // Create a response to delete the authToken cookie

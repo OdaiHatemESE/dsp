@@ -1,29 +1,36 @@
 'use client';
 
-// pages/redirect.tsx
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setToken } from '@/store/slices/authSlice';
+import { AppDispatch } from '@/store'; // Assuming you have a typed store
 
-export default function RedirectPage() {
+const RedirectPage: React.FC = () => {
   const LoginURL = process.env.NEXT_PUBLIC_LOGIN_URL;
   const PortalURL = process.env.NEXT_PUBLIC_PORTAL_URL;
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
     const hash = window.location.hash;
-    const token = hash && hash.startsWith('#token=') ? hash.substring(7) : null;
-
+    const token = hash?.startsWith('#token=') ? hash.substring(7) : null;
 
     if (token) {
-      dispatch(setToken(token));
-      window.location.href = '/parent';
-      //   router.replace('/'); // Redirect to the home page after setting the token
+      try {
+        // Dispatch the token to store
+        dispatch(setToken(token));
+
+        // Redirect to /parent after setting the token
+        window.location.href = '/parent';
+      } catch (error) {
+        console.error('Error setting the token:', error);
+        // Optionally, handle any errors such as showing an error message or redirecting
+      }
     } else {
-      window.location.href = LoginURL + '?RedirectUri=' + PortalURL + '/redirect'
-      // router.replace('/login'); // Redirect to login if no token is found
+      // Safely encode URL to prevent XSS attacks
+      const encodedRedirectURI = encodeURIComponent(`${PortalURL}/redirect`);
+      window.location.href = `${LoginURL}?RedirectUri=${encodedRedirectURI}`;
     }
-  }, [dispatch]);
+  }, [dispatch, LoginURL, PortalURL]);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-[#212121eb]">
@@ -54,3 +61,4 @@ export default function RedirectPage() {
   );
 };
 
+export default RedirectPage;
