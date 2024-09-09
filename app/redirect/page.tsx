@@ -6,8 +6,8 @@ import { useDispatch } from 'react-redux';
 import { setToken } from '@/store/slices/authSlice';
 
 export default function RedirectPage() {
-  const LoginURL = process.env.LoginURL;
-  const PortalURL = process.env.PORTALURL;
+  const LoginURL = process.env.NEXT_PUBLIC_LOGIN_URL;
+  const PortalURL = process.env.NEXT_PUBLIC_PORTAL_URL;
   const dispatch = useDispatch();
 
   useEffect(() => {

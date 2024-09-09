@@ -7,7 +7,7 @@ export async function middleware(req: NextRequest) {
   // Retrieving the authToken from cookies
   let token = req.cookies.get('authToken')?.value ?? '';
 
-  const LoginURL = process.env.LoginURL ?? '';
+  const LoginURL = process.env.NEXT_PUBLIC_LOGIN_URL ?? '';
 
   // Check if token exists
   if (token) {
