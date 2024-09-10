@@ -77,88 +77,95 @@ export default function Page(props: any) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border rounded border-gray-300 p-6 mb-5" >
 
           <div>
-            <div className="mb-4 md:flex md:items-baseline">
-              <label htmlFor="school-representative" className="block mb-2">الطرف الأول: مؤسسة الإمارات للتعليم المدرسي ويمثلها مدرسة</label>
-              <input type="text" id="school-representative" value={studentInfo.SchoolName} name="school-representative" className="w-full p-2 border border-gray-300 rounded" placeholder="..........................................................." />
+            <p>الطرف الأول: مؤسسة الإمارات للتعليم المدرسي</p>
+            <div className="mb-4  aegov-form-control">
+              <label htmlFor="school-representative" className="block mb-2"> ويمثلها مدرسة</label>
+              <input type="text" id="school-representative" value={studentInfo.SchoolName} name="school-representative" disabled className="form-control-input   p-2 border border-gray-300 rounded disabled:grayscale disabled:bg-gray-200  " placeholder="..........................................................." />
             </div>
-            <div className="mb-4 md:flex md:items-baseline">
+            <div className="mb-4  aegov-form-control">
               <label htmlFor="school-address" className="block mb-2">عنوانها:</label>
-              <input value={studentInfo.SchoolAddress} type="text" id="school-address" name="school-address" className="w-full p-2 border border-gray-300 rounded" placeholder="..........................................................." />
+              <input value={studentInfo.SchoolAddress} type="text" id="school-address" name="school-address" disabled className="form-control-input   p-2 border border-gray-300 rounded disabled:grayscale disabled:bg-gray-200" placeholder="..........................................................." />
             </div>
-            <div className="mb-4 md:flex md:items-baseline">
+            <div className="mb-4  aegov-form-control">
               <label htmlFor="school-contact" className="block mb-2">رقم التواصل:</label>
-              <input disabled value={studentInfo.SchoolPhone} type="text" id="school-contact" name="school-contact" className="w-full p-2 bg-gray-500 border border-gray-300 rounded" placeholder="..........................................................." />
+              <input disabled value={studentInfo.SchoolPhone} type="text" id="school-contact" name="school-contact" className="form-control-input   p-2 border border-gray-300 rounded disabled:grayscale disabled:bg-gray-200" placeholder="..........................................................." />
             </div>
           </div>
 
           <div>
             <p>الطرف الثاني: ولي الأمر/ الوصي</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="mb-4 md:flex md:items-baseline">
+              <div className=" aegov-form-control">
                 <label htmlFor="guardian-name" className="block mb-2">اسم ولي الأمر/ الوصي:</label>
                 <input
                   type="text"
                   id="guardian-name"
+                  disabled
                   value={studentInfo.ParentName}
                   name="guardian-name"
-                  className="w-full p-2 border border-gray-300 rounded"
+                  className="form-control-input   p-2 border border-gray-300 rounded disabled:grayscale disabled:bg-gray-200"
                   placeholder="..........................................................."
                 />
               </div>
 
-              <div className="mb-4 md:flex md:items-baseline">
+              <div className="  aegov-form-control">
                 <label htmlFor="emirates-id-1" className="block mb-2">رقم الهوية الإماراتية:  </label>
                 <input
                   type="text"
                   value={studentInfo.ParentEmiratesID}
                   id="emirates-id-1"
                   name="emirates-id-1"
-                  className="w-full p-2 border border-gray-300 rounded"
+                  disabled
+                  className="form-control-input   p-2 border border-gray-300 rounded disabled:grayscale disabled:bg-gray-200"
                   placeholder="..........................................................."
                 />
               </div>
-              <div className="mb-4 md:flex md:items-baseline" >
+              <div className="  aegov-form-control" >
                 <label htmlFor="student-name" className="block mb-2">اسم الطالب/الطالبة:</label>
                 <input
                   type="text"
+                  disabled
                   id="student-name"
                   value={studentInfo.Name}
                   name="student-name"
-                  className="w-full p-2 border border-gray-300 rounded"
+                  className="form-control-input   p-2 border border-gray-300 rounded disabled:grayscale disabled:bg-gray-200"
                   placeholder="..........................................................."
                 />
               </div>
 
-              <div className="mb-4 md:flex md:items-baseline">
+              <div className="  aegov-form-control">
                 <label htmlFor="emirates-id-2" className="block mb-2">رقم الهوية الإماراتية:</label>
                 <input
                   type="text"
+                  disabled
                   id="emirates-id-2"
                   value={studentInfo.StudentEmiratesID}
                   name="emirates-id-2"
-                  className="w-full p-2 border border-gray-300 rounded"
+                  className="form-control-input   p-2 border border-gray-300 rounded disabled:grayscale disabled:bg-gray-200"
                   placeholder="..........................................................."
                 />
               </div>
-              <div className="mb-4 md:flex md:items-baseline">
+              <div className="mb-4 aegov-form-control">
                 <label htmlFor="address" className="block mb-2">العنوان:</label>
                 <input
                   type="text"
                   id="address"
+                  disabled
                   value={studentInfo.Address}
                   name="address"
-                  className="w-full p-2 border border-gray-300 rounded"
+                  className="form-control-input   p-2 border border-gray-300 rounded disabled:grayscale disabled:bg-gray-200"
                   placeholder="..........................................................."
                 />
               </div>
-              <div className="mb-4 md:flex md:items-baseline">
+              <div className="mb-4 aegov-form-control">
                 <label htmlFor="guardian-contact" className="block mb-2">رقم الهاتف:</label>
                 <input
                   type="text"
                   id="guardian-contact"
                   value={studentInfo.Phone}
+                  disabled
                   name="guardian-contact"
-                  className="w-full p-2 border border-gray-300 rounded"
+                  className="form-control-input   p-2 border border-gray-300 rounded disabled:grayscale disabled:bg-gray-200"
                   placeholder="..........................................................."
                 />
               </div>
@@ -308,27 +315,33 @@ export default function Page(props: any) {
         <div className=" p-6 border  border-gray-300 rounded-lg mb-12">
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4   border-gray-300 py-4 ">
-            <div className="flex flex-col justify-between">
-              <label className="mb-2">اسم مدير المدرسة:</label>
-              <input
-                type="text"
-                value={studentInfo.PrincipalName}
-                className="w-full p-2 border border-gray-300 rounded mb-2"
-                placeholder="..................................................."
-              />
-              <label className="mb-2">التوقيع:</label>
-              <input
-                type="text"
-                className="w-full p-2 border border-gray-300 rounded"
-                placeholder="..................................................."
-              />
+            <div className="  aegov-form-control ">
+              <div className="mb-4">
+                <label className="mb-2">اسم مدير المدرسة:</label>
+                <input
+                  type="text"
+                  disabled
+                  value={studentInfo.PrincipalName}
+                  className="form-control-input   p-2 border border-gray-300 rounded disabled:grayscale disabled:bg-gray-200"
+                  placeholder="..................................................."
+                />
+              </div>
+              <div>
+                <label className="mb-2">التوقيع:</label>
+                <input
+                  type="text"
+                  className="w-full p-2 border border-gray-300 rounded"
+                  placeholder="..................................................."
+                />
+              </div>
             </div>
-            <div className="flex flex-col justify-between">
+            <div className="aegov-form-control">
               <label className="mb-2">اسم ولي أمر الطالب/الوصي:</label>
               <input
                 type="text"
+                disabled
                 value={studentInfo.ParentName}
-                className="w-full p-2 border border-gray-300 rounded mb-2"
+                className="form-control-input   p-2 border border-gray-300 rounded disabled:grayscale disabled:bg-gray-200 mb-4"
                 placeholder="..................................................."
               />
               <label className="mb-2">التوقيع:</label>
@@ -346,12 +359,13 @@ export default function Page(props: any) {
                 placeholder="..................................................."
               />
             </div>
-            <div className="flex flex-col justify-between">
+            <div className="flex flex-col justify-between aegov-form-control">
               <label className="mb-2">رقم الهوية الإماراتية:</label>
               <input
                 type="text"
+                disabled
                 value={studentInfo.ParentEmiratesID}
-                className="w-full p-2 border border-gray-300 rounded"
+                className="form-control-input   p-2 border border-gray-300 rounded disabled:grayscale disabled:bg-gray-200 mb-4"
                 placeholder="..................................................."
               />
             </div>

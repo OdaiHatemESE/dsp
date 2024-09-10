@@ -15,7 +15,7 @@ export default interface StudentRecord {
     SchoolName: string;
     SchoolAddress: string;
     SchoolPhone: string;
-    isSigned: string;
+    isSigned: boolean;
     SignDate: Date;
     Nationality: string;
     Citizenship: string;
